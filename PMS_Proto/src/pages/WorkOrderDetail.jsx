@@ -299,7 +299,7 @@ export default function WorkOrderDetail({ woId, onBack }) {
             fontSize: 12, fontWeight: 600, letterSpacing: '0.02em',
             background: sStyle.background, color: sStyle.color,
           }}>
-            {wo.status}
+            Current Status: {wo.status}
           </div>
         </div>
 
