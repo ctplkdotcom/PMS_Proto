@@ -205,7 +205,7 @@ export default function WorkOrderCreate({ onBack, onViewWO }) {
           </div>
         </div>
 
-        {/* Scrollable Form Area */}
+        {/* Scrollable Form Area **/}
         <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
 
           {/* Section 1: Administrative Details */}
