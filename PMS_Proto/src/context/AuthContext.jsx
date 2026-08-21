@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { useTranslation } from '../i18n/LanguageContext';
+import { useTranslation, useLanguage } from '../i18n/LanguageContext';
 import { ROLES } from '../data/constants';
 
 const AuthContext = createContext({
@@ -32,22 +32,28 @@ export function useAuth() {
 
 function LoginScreen({ onLogin }) {
   const { t } = useTranslation();
+  const { language, setLanguage } = useLanguage();
 
   return (
     <div style={{ display: 'flex', width: '100vw', height: '100vh', backgroundColor: '#F1F5F9', fontFamily: 'sans-serif' }}>
+      {/* Language Toggle */}
+      <button onClick={() => setLanguage(language === 'en' ? 'zh' : 'en')}
+        style={{ position: 'absolute', top: 20, right: 24, padding: '6px 14px', fontSize: 12, fontWeight: 600, borderRadius: 6, border: '1px solid #E2E8F0', background: '#fff', color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, zIndex: 10, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        {language === 'en' ? '\u7E41\u9AD4\u4E2D\u6587' : 'English'}
+      </button>
+
       <div style={{ flex: 1, padding: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRight: '1px solid #E2E8F0', backgroundColor: '#fff' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 48 }}>
           <div style={{ width: 40, height: 40, backgroundColor: '#0B132B', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
           </div>
-          <span style={{ fontSize: 24, fontWeight: 800, color: '#0B132B', letterSpacing: '-0.02em' }}>PMS</span>
+          <span style={{ fontSize: 22, fontWeight: 800, color: '#0B132B', letterSpacing: '-0.02em' }}>{t('login.brandName')}</span>
         </div>
-        <h1 style={{ fontSize: 32, fontWeight: 800, color: '#0F172A', marginBottom: 12, letterSpacing: '-0.02em' }}>{t('login.ssoTitle')}</h1>
-        <p style={{ fontSize: 16, color: '#64748B', marginBottom: 40 }}>{t('login.ssoSubtitle')}</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 400 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('login.corpId')}</label>
-            <input disabled placeholder={t('login.corpIdPlaceholder')} style={{ padding: '12px 16px', borderRadius: 6, border: '1px solid #CBD5E1', backgroundColor: '#F8FAFC', color: '#94A3B8' }} />
+            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('login.loginId')}</label>
+            <input disabled placeholder={t('login.loginIdPlaceholder')} style={{ padding: '12px 16px', borderRadius: 6, border: '1px solid #CBD5E1', backgroundColor: '#F8FAFC', color: '#94A3B8' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('login.password')}</label>

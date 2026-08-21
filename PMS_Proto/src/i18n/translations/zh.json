@@ -1,12 +1,15 @@
 {
   "app.title": "物業管理系統",
 
+  "login.brandName": "物業管理系統 (PMS)",
   "login.ssoTitle": "單一登入門戶",
   "login.ssoSubtitle": "企業認證閘道",
-  "login.corpId": "公司編號",
-  "login.corpIdPlaceholder": "輸入您的公司編號",
+  "login.loginId": "登入編號",
+  "login.loginIdPlaceholder": "輸入您的登入編號",
+  "login.corpId": "登入編號",
+  "login.corpIdPlaceholder": "輸入您的登入編號",
   "login.password": "密碼",
-  "login.passwordPlaceholder": "••••••••",
+  "login.passwordPlaceholder": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
   "login.ssoButton": "透過企業 SSO 登入",
   "login.quickTitle": "演示快速登入（選擇角色）",
   "login.disabled": "已停用",
