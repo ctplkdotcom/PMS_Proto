@@ -1,14 +1,88 @@
-import { useState } from 'react';
-import { PROPERTIES } from '../data/constants';
-import { Plus, Search, MapPin, Building2, Users, TrendingUp } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { PROPERTIES, COMPLIANCE_DOCS } from '../data/constants';
+import { Plus, Search, Eye, Pencil, X, ArrowUpDown, ArrowUp, ArrowDown, MapPin, Building2, Phone, Mail, User, FileText, Calendar, Ruler } from 'lucide-react';
 
-export default function Properties() {
-  const [search, setSearch] = useState('');
+const ALL_TYPES = ['All', 'Headquarters', 'Community Centre', 'Health Centre', 'Rehabilitation Centre', 'Elderly Home', 'Child Care Centre'];
+const ALL_DISTRICTS = ['All', 'Hong Kong Island', 'Kowloon', 'New Territories'];
 
-  const filtered = PROPERTIES.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.address.toLowerCase().includes(search.toLowerCase())
+function SortIcon({ col, sortCol, sortDir }) {
+  if (sortCol !== col) return <ArrowUpDown size={11} color="#CBD5E1" />;
+  return sortDir === 'asc' ? <ArrowUp size={11} color="var(--info)" /> : <ArrowDown size={11} color="var(--info)" />;
+}
+
+function FilterDropdown({ label, options, selected, onSelect, counts }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ position: 'relative' }}>
+      <button onClick={() => setOpen(!open)} style={{ padding: '8px 12px', fontSize: 12, fontWeight: 600, borderRadius: 8, border: '1px solid var(--border)', background: selected !== 'All' ? 'var(--info-bg)' : '#fff', color: selected !== 'All' ? 'var(--info)' : '#64748B', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+        {label}: {selected}
+      </button>
+      {open && (
+        <>
+          <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 90 }} />
+          <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, minWidth: 180, background: '#fff', border: '1px solid var(--border)', borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 100, padding: 4 }}>
+            {options.map((opt) => (
+              <button key={opt} onClick={() => { onSelect(opt); setOpen(false); }} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', padding: '7px 10px', fontSize: 12, border: 'none', background: selected === opt ? 'var(--info-bg)' : 'transparent', color: selected === opt ? 'var(--info)' : '#475569', cursor: 'pointer', borderRadius: 4, textAlign: 'left' }}>
+                <span>{opt}</span>
+                {counts && <span style={{ fontSize: 11, color: '#94A3B8' }}>{counts[opt] || 0}</span>}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
+}
+
+export default function Properties({ onViewProperty }) {
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState('All');
+  const [districtFilter, setDistrictFilter] = useState('All');
+  const [sortCol, setSortCol] = useState('name');
+  const [sortDir, setSortDir] = useState('asc');
+  const [previewProp, setPreviewProp] = useState(null);
+
+  const typeCounts = useMemo(() => {
+    const c = { All: PROPERTIES.length };
+    PROPERTIES.forEach((p) => { c[p.type] = (c[p.type] || 0) + 1; });
+    return c;
+  }, []);
+
+  const districtCounts = useMemo(() => {
+    const c = { All: PROPERTIES.length };
+    PROPERTIES.forEach((p) => { c[p.district] = (c[p.district] || 0) + 1; });
+    return c;
+  }, []);
+
+  const filtered = useMemo(() => {
+    let list = PROPERTIES.filter((p) => {
+      if (typeFilter !== 'All' && p.type !== typeFilter) return false;
+      if (districtFilter !== 'All' && p.district !== districtFilter) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        return p.name.toLowerCase().includes(q) || p.address.toLowerCase().includes(q) || p.district.toLowerCase().includes(q) || p.contact.manager.toLowerCase().includes(q);
+      }
+      return true;
+    });
+    list.sort((a, b) => {
+      const va = a[sortCol] ?? '';
+      const vb = b[sortCol] ?? '';
+      const cmp = typeof va === 'string' ? va.localeCompare(vb) : va - vb;
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+    return list;
+  }, [search, typeFilter, districtFilter, sortCol, sortDir]);
+
+  const handleSort = (col) => {
+    if (sortCol === col) setSortDir((d) => d === 'asc' ? 'desc' : 'asc');
+    else { setSortCol(col); setSortDir('asc'); }
+  };
+
+  const activeFilters = [];
+  if (typeFilter !== 'All') activeFilters.push({ key: 'type', label: `Type: ${typeFilter}`, clear: () => setTypeFilter('All') });
+  if (districtFilter !== 'All') activeFilters.push({ key: 'district', label: `District: ${districtFilter}`, clear: () => setDistrictFilter('All') });
+
+  const getPropDocs = (propName) => COMPLIANCE_DOCS.filter((d) => d.center === propName);
 
   return (
     <div style={{ padding: 24, maxWidth: 1400 }}>
@@ -22,46 +96,179 @@ export default function Properties() {
         </button>
       </div>
 
-      <div style={{ position: 'relative', marginBottom: 20 }}>
-        <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
-        <input
-          value={search} onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search properties..."
-          style={{ width: '100%', padding: '10px 12px 10px 36px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13, background: '#fff', outline: 'none' }}
-        />
+      {/* Search + Filters */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: 240 }}>
+          <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name, address, district, or manager..." style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13, background: '#fff', outline: 'none' }} />
+        </div>
+        <FilterDropdown label="Type" options={ALL_TYPES} selected={typeFilter} onSelect={setTypeFilter} counts={typeCounts} />
+        <FilterDropdown label="District" options={ALL_DISTRICTS} selected={districtFilter} onSelect={setDistrictFilter} counts={districtCounts} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
-        {filtered.map((prop) => (
-          <div key={prop.id} style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', boxShadow: 'var(--card-shadow)', overflow: 'hidden', cursor: 'pointer', transition: 'box-shadow 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 12px rgba(15,23,42,0.1)')} onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'var(--card-shadow)')}>
-            <div style={{ height: 8, background: 'linear-gradient(90deg, var(--info), var(--primary))' }} />
-            <div style={{ padding: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--info-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Building2 size={20} color="var(--info)" />
+      {/* Active Filter Chips */}
+      {activeFilters.length > 0 && (
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14, alignItems: 'center', flexWrap: 'wrap' }}>
+          {activeFilters.map((f) => (
+            <span key={f.key} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 20, fontSize: 12, fontWeight: 500, background: 'var(--info-bg)', color: 'var(--primary)', border: '1px solid rgba(37,99,235,0.2)' }}>
+              {f.label}
+              <button onClick={f.clear} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'var(--primary)' }}><X size={12} /></button>
+            </span>
+          ))}
+          <button onClick={() => { setTypeFilter('All'); setDistrictFilter('All'); }} style={{ fontSize: 12, color: '#64748B', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}>Clear all</button>
+        </div>
+      )}
+
+      {/* Table */}
+      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', boxShadow: 'var(--card-shadow)', overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
+                {[
+                  { key: 'name', label: 'Name', width: undefined },
+                  { key: 'type', label: 'Type', width: 140 },
+                  { key: 'district', label: 'District', width: 150 },
+                  { key: 'floorArea', label: 'Floor Area', width: 110 },
+                  { key: 'yearBuilt', label: 'Year Built', width: 100 },
+                  { key: 'status', label: 'Status', width: 90 },
+                  { key: 'contact', label: 'Contact', width: 150 },
+                ].map((col) => (
+                  <th key={col.key} onClick={() => handleSort(col.key)} style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', width: col.width, background: sortCol === col.key ? '#F1F5F9' : undefined }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>{col.label} <SortIcon col={col.key} sortCol={sortCol} sortDir={sortDir} /></span>
+                  </th>
+                ))}
+                <th style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((prop) => (
+                <tr key={prop.id} style={{ borderBottom: '1px solid var(--border)' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+                  <td style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ width: 34, height: 34, borderRadius: 8, background: 'var(--info-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Building2 size={16} color="var(--info)" /></div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--foreground)' }}>{prop.name}</div>
+                        <div style={{ fontSize: 11, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: 3, marginTop: 2 }}><MapPin size={10} />{prop.address}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '12px 16px' }}><span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 10, background: '#F1F5F9', color: '#475569' }}>{prop.type}</span></td>
+                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#64748B' }}>{prop.district}</td>
+                  <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 500, color: 'var(--foreground)', textAlign: 'right' }}>{prop.floorArea.toLocaleString()} sqm</td>
+                  <td style={{ padding: '12px 16px', fontSize: 13, color: '#64748B' }}>{prop.yearBuilt}</td>
+                  <td style={{ padding: '12px 16px' }}><span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 10, background: prop.status === 'Active' ? 'var(--success-bg)' : '#F1F5F9', color: prop.status === 'Active' ? 'var(--success)' : '#64748B' }}>{prop.status}</span></td>
+                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#475569' }}>{prop.contact.manager}</td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.stopPropagation()}>
+                      <button onClick={() => setPreviewProp(prop)} title="Preview Property" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Eye size={14} color="#64748B" /></button>
+                      <button onClick={() => onViewProperty(prop.id)} title="Edit Property" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Pencil size={14} color="#64748B" /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {filtered.length === 0 && (
+          <div style={{ padding: 48, textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
+            <div style={{ fontSize: 16, marginBottom: 8, color: '#CBD5E1' }}>No properties found</div>
+            <div>Try adjusting your search or filters</div>
+          </div>
+        )}
+      </div>
+
+      {/* Preview Modal */}
+      {previewProp && (
+        <div onClick={() => setPreviewProp(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#fff', borderRadius: 14, width: '100%', maxWidth: 560, maxHeight: '80vh', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            {/* Header */}
+            <div style={{ padding: '18px 24px', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Building2 size={18} color="var(--info)" />
+                <span style={{ fontSize: 15, fontWeight: 700, color: '#0F172A' }}>{previewProp.name}</span>
+              </div>
+              <button onClick={() => setPreviewProp(null)} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E2E8F0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={14} color="#64748B" /></button>
+            </div>
+            {/* Body */}
+            <div style={{ padding: '20px 24px', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 10, background: '#F1F5F9', color: '#475569' }}>{previewProp.type}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 10, background: 'var(--success-bg)', color: 'var(--success)' }}>{previewProp.status}</span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 24px', marginBottom: 20 }}>
+                <PreviewField icon={<MapPin size={13} />} label="Address" value={previewProp.address} />
+                <PreviewField icon={<MapPin size={13} />} label="District" value={previewProp.district} />
+                <PreviewField icon={<Ruler size={13} />} label="Floor Area" value={`${previewProp.floorArea.toLocaleString()} sqm`} />
+                <PreviewField icon={<Calendar size={13} />} label="Year Built" value={previewProp.yearBuilt} />
+              </div>
+
+              {/* Contact */}
+              <div style={{ padding: 16, borderRadius: 10, border: '1px solid #E2E8F0', background: '#F8FAFC', marginBottom: 20 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>Contact Information</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><User size={13} color="#64748B" /><span style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>{previewProp.contact.manager}</span><span style={{ fontSize: 11, color: '#94A3B8' }}>{previewProp.contact.role}</span></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}><Phone size={13} color="#64748B" /><a href={`tel:${previewProp.contact.phone}`} style={{ fontSize: 13, color: 'var(--info)', textDecoration: 'none' }}>{previewProp.contact.phone}</a></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Mail size={13} color="#64748B" /><a href={`mailto:${previewProp.contact.email}`} style={{ fontSize: 13, color: 'var(--info)', textDecoration: 'none' }}>{previewProp.contact.email}</a></div>
+              </div>
+
+              {/* Compliance Summary */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Compliance Documents</div>
+                <div style={{ display: 'flex', gap: 12 }}>
+                  {(() => {
+                    const docs = getPropDocs(previewProp.name);
+                    const valid = docs.filter((d) => d.status === 'Valid').length;
+                    const expiring = docs.filter((d) => d.status === 'Expiring').length;
+                    const expired = docs.filter((d) => d.status === 'Expired').length;
+                    return (
+                      <>
+                        <div style={{ flex: 1, padding: 10, background: '#F0FDF4', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: 'var(--success)' }}>{valid}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>Valid</div></div>
+                        <div style={{ flex: 1, padding: 10, background: expiring > 0 ? '#FEF3C7' : '#F8FAFC', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: expiring > 0 ? '#B45309' : '#94A3B8' }}>{expiring}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>Expiring</div></div>
+                        <div style={{ flex: 1, padding: 10, background: expired > 0 ? '#FEE2E2' : '#F8FAFC', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: expired > 0 ? '#DC2626' : '#94A3B8' }}>{expired}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>Expired</div></div>
+                      </>
+                    );
+                  })()}
                 </div>
+              </div>
+
+              {/* Attachments */}
+              {previewProp.attachments.length > 0 && (
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--foreground)' }}>{prop.name}</div>
-                  <div style={{ fontSize: 12, color: '#64748B' }}>{prop.type}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Attachments</div>
+                  {previewProp.attachments.map((a, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', borderRadius: 6, background: '#F8FAFC', marginBottom: 4 }}>
+                      <FileText size={13} color="#64748B" />
+                      <span style={{ fontSize: 12, color: '#475569', flex: 1 }}>{a.name}</span>
+                      <span style={{ fontSize: 11, color: '#94A3B8' }}>{a.size}</span>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-                <MapPin size={13} color="#94A3B8" />
-                <span style={{ fontSize: 12, color: '#64748B' }}>{prop.address}</span>
-              </div>
-              <div style={{ display: 'flex', gap: 16 }}>
-                <div style={{ flex: 1, padding: 10, background: '#F8FAFC', borderRadius: 8, textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--foreground)' }}>{prop.units}</div>
-                  <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>Units</div>
-                </div>
-                <div style={{ flex: 1, padding: 10, background: '#F8FAFC', borderRadius: 8, textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: prop.occupancy >= 95 ? 'var(--success)' : 'var(--info)' }}>{prop.occupancy}%</div>
-                  <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>Occupancy</div>
-                </div>
-              </div>
+              )}
+            </div>
+            {/* Footer */}
+            <div style={{ padding: '14px 24px', borderTop: '1px solid #E2E8F0', display: 'flex', justifyContent: 'flex-end', gap: 8, flexShrink: 0 }}>
+              <button onClick={() => { setPreviewProp(null); onViewProperty(previewProp.id); }} style={{ padding: '7px 16px', borderRadius: 6, border: '1px solid #E2E8F0', background: '#fff', fontSize: 12, fontWeight: 600, color: '#334155', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Pencil size={13} /> View Details
+              </button>
+              <button onClick={() => setPreviewProp(null)} style={{ padding: '7px 16px', borderRadius: 6, border: 'none', background: '#0F172A', fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
+                Close
+              </button>
             </div>
           </div>
-        ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PreviewField({ icon, label, value }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+      <span style={{ marginTop: 2, color: '#94A3B8' }}>{icon}</span>
+      <div>
+        <div style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+        <div style={{ fontSize: 13, fontWeight: 500, color: '#334155', marginTop: 2 }}>{value}</div>
       </div>
     </div>
   );

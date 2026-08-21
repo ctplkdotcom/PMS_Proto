@@ -610,18 +610,18 @@ export const FLOOR_PLAN_ASSETS = [
 ];
 
 export const PROPERTIES = [
-  { id: 1, name: "PLK Main Building (Causeway Bay)", type: "Headquarters", address: "66 Leighton Road, Causeway Bay", units: 42, occupancy: 98, status: "Active" },
-  { id: 2, name: "PLK Shek Kip Mei Community Services Centre", type: "Community Centre", address: "Sham Shui Po, Kowloon", units: 24, occupancy: 96, status: "Active" },
-  { id: 3, name: "PLK Making Life Beautiful Integrated Health Centre", type: "Health Centre", address: "Kowloon Bay, Kowloon", units: 18, occupancy: 91, status: "Active" },
-  { id: 4, name: "PLK Cheerful Court Integrated Health Centre", type: "Health Centre", address: "Sham Shui Po, Kowloon", units: 16, occupancy: 94, status: "Active" },
-  { id: 5, name: "PLK Tin Shui Wai Rehabilitation Centre", type: "Rehabilitation Centre", address: "Tin Shui Wai, New Territories", units: 36, occupancy: 89, status: "Active" },
-  { id: 6, name: "PLK Lee Chiu Kong Memorial Centre", type: "Rehabilitation Centre", address: "Kwun Tong, Kowloon", units: 32, occupancy: 93, status: "Active" },
-  { id: 7, name: "PLK Y.C. Cheng Centre", type: "Rehabilitation Centre", address: "Aberdeen, Hong Kong Island", units: 28, occupancy: 87, status: "Active" },
-  { id: 8, name: "PLK Sai Ying Pun Home for the Elderly", type: "Elderly Home", address: "Sai Ying Pun, Hong Kong Island", units: 48, occupancy: 97, status: "Active" },
-  { id: 9, name: "PLK Wan Chai Home for the Elderly", type: "Elderly Home", address: "Wan Chai, Hong Kong Island", units: 40, occupancy: 95, status: "Active" },
-  { id: 10, name: "PLK Kwok Law Kwai Chun Home for the Elderly", type: "Elderly Home", address: "Sheung Wan, Hong Kong Island", units: 38, occupancy: 92, status: "Active" },
-  { id: 11, name: "PLK Angela Leong On Kei Kindergarten-cum-Nursery", type: "Child Care Centre", address: "Sham Shui Po, Kowloon", units: 20, occupancy: 100, status: "Active" },
-  { id: 12, name: "PLK Child Development Centre (Causeway Bay)", type: "Child Care Centre", address: "66 Leighton Road, Causeway Bay", units: 14, occupancy: 86, status: "Active" },
+  { id: 1, name: "PLK Main Building (Causeway Bay)", type: "Headquarters", address: "66 Leighton Road, Causeway Bay", district: "Hong Kong Island", floorArea: 2800, yearBuilt: 1992, status: "Active", contact: { manager: "Chan Siu Ming", phone: "+852 2839 1234", email: "siuming.chan@plk.org.hk", role: "Centre Manager" }, attachments: [{ name: "Floor Plan - G.pdf", date: "2026-01-15", size: "2.4 MB" }, { name: "Building Inspection 2025.pdf", date: "2025-11-20", size: "5.1 MB" }] },
+  { id: 2, name: "PLK Shek Kip Mei Community Services Centre", type: "Community Centre", address: "130 La Chi Street, Sham Shui Po, Kowloon", district: "Kowloon", floorArea: 1850, yearBuilt: 2005, status: "Active", contact: { manager: "Leung Chi Fai", phone: "+852 2776 3456", email: "chifai.leung@plk.org.hk", role: "Centre Manager" }, attachments: [{ name: "Emergency Evacuation Plan.pdf", date: "2026-03-10", size: "1.8 MB" }] },
+  { id: 3, name: "PLK Making Life Beautiful Integrated Health Centre", type: "Health Centre", address: "123 Ning Yuen Street, Kowloon Bay, Kowloon", district: "Kowloon", floorArea: 2200, yearBuilt: 2010, status: "Active", contact: { manager: "Wong Pik Shan", phone: "+852 2756 7890", email: "pikshan.wong@plk.org.hk", role: "Centre Manager" }, attachments: [] },
+  { id: 4, name: "PLK Cheerful Court Integrated Health Centre", type: "Health Centre", address: "88 Yen Chow Street, Sham Shui Po, Kowloon", district: "Kowloon", floorArea: 1600, yearBuilt: 2012, status: "Active", contact: { manager: "Tang Hiu Ming", phone: "+852 2362 1234", email: "hiuming.tang@plk.org.hk", role: "Centre Manager" }, attachments: [{ name: "Floor Plan.pdf", date: "2025-09-01", size: "1.5 MB" }] },
+  { id: 5, name: "PLK Tin Shui Wai Rehabilitation Centre", type: "Rehabilitation Centre", address: "9 Tin Hei Street, Tin Shui Wai, New Territories", district: "New Territories", floorArea: 3500, yearBuilt: 1998, status: "Active", contact: { manager: "Ng Ka Wai", phone: "+852 2459 5678", email: "kawai.ng@plk.org.hk", role: "Centre Manager" }, attachments: [{ name: "Site Safety Plan.pdf", date: "2026-02-20", size: "3.2 MB" }] },
+  { id: 6, name: "PLK Lee Chiu Kong Memorial Centre", type: "Rehabilitation Centre", address: "100 Wai Yip Street, Kwun Tong, Kowloon", district: "Kowloon", floorArea: 3200, yearBuilt: 1995, status: "Active", contact: { manager: "Ip Suet Ying", phone: "+852 2389 4567", email: "suetying.ip@plk.org.hk", role: "Centre Manager" }, attachments: [{ name: "Fire Safety Plan.pdf", date: "2026-04-05", size: "2.8 MB" }, { name: "Annual Report 2025.pdf", date: "2026-01-30", size: "8.3 MB" }] },
+  { id: 7, name: "PLK Y.C. Cheng Centre", type: "Rehabilitation Centre", address: "200 Aberdeen Main Road, Aberdeen, Hong Kong Island", district: "Hong Kong Island", floorArea: 2600, yearBuilt: 2001, status: "Active", contact: { manager: "Fong Tsz Wan", phone: "+852 2552 8901", email: "tszwan.fong@plk.org.hk", role: "Centre Manager" }, attachments: [] },
+  { id: 8, name: "PLK Sai Ying Pun Home for the Elderly", type: "Elderly Home", address: "35 First Street, Sai Ying Pun, Hong Kong Island", district: "Hong Kong Island", floorArea: 2100, yearBuilt: 1988, status: "Active", contact: { manager: "Lam Wai Man", phone: "+852 2547 2345", email: "waiman.lam@plk.org.hk", role: "Centre Manager" }, attachments: [{ name: "Building Safety Report.pdf", date: "2025-12-15", size: "4.0 MB" }] },
+  { id: 9, name: "PLK Wan Chai Home for the Elderly", type: "Elderly Home", address: "120 Johnston Road, Wan Chai, Hong Kong Island", district: "Hong Kong Island", floorArea: 1900, yearBuilt: 1990, status: "Active", contact: { manager: "Yip Pui Ling", phone: "+852 2573 6789", email: "puiling.yip@plk.org.hk", role: "Centre Manager" }, attachments: [] },
+  { id: 10, name: "PLK Kwok Law Kwai Chun Home for the Elderly", type: "Elderly Home", address: "88 Queen's Road West, Sheung Wan, Hong Kong Island", district: "Hong Kong Island", floorArea: 2400, yearBuilt: 1996, status: "Active", contact: { manager: "Chow Kit Ying", phone: "+852 2548 3456", email: "kitying.chow@plk.org.hk", role: "Centre Manager" }, attachments: [{ name: "Insurance Certificate 2026.pdf", date: "2026-01-05", size: "1.2 MB" }] },
+  { id: 11, name: "PLK Angela Leong On Kei Kindergarten-cum-Nursery", type: "Child Care Centre", address: "156 Lai Chi Kok Road, Sham Shui Po, Kowloon", district: "Kowloon", floorArea: 1200, yearBuilt: 2008, status: "Active", contact: { manager: "So Ming Yi", phone: "+852 2327 7890", email: "mingyi.so@plk.org.hk", role: "Centre Manager" }, attachments: [{ name: "Child Safety Policy.pdf", date: "2026-06-01", size: "0.8 MB" }] },
+  { id: 12, name: "PLK Child Development Centre (Causeway Bay)", type: "Child Care Centre", address: "66 Leighton Road, Causeway Bay", district: "Hong Kong Island", floorArea: 1100, yearBuilt: 2014, status: "Active", contact: { manager: "Kwok Hiu Lam", phone: "+852 2893 4567", email: "hiulam.kwok@plk.org.hk", role: "Centre Manager" }, attachments: [] },
 ];
 
 export const ASSETS = [
@@ -635,16 +635,7 @@ export const ASSETS = [
   { id: "AST-008", name: "LED Lighting — Corridors", type: "Electrical", location: "PLK Tin Shui Wai Rehabilitation Centre", status: "Operational", lastService: "2026-03-01", nextService: "2027-03-01", manufacturer: "Philips", model: "CoreLine Panel", installYear: 2023 },
 ];
 
-export const COMPLIANCE_DOCS = [
-  { id: 1, name: "FS251 Fire Safety Certificate", type: "Certificate", expiry: "2026-08-21", status: "Expiring", center: "PLK Lee Chiu Kong Memorial Centre" },
-  { id: 2, name: "AMSL Insurance Policy", type: "Insurance", expiry: "2026-12-31", status: "Valid", center: "All" },
-  { id: 3, name: "Building Inspection Report", type: "Inspection", expiry: "2027-03-15", status: "Valid", center: "PLK Shek Kip Mei Community Services Centre" },
-  { id: 4, name: "Environmental Impact Assessment", type: "Assessment", expiry: "2026-09-30", status: "Valid", center: "PLK Tin Shui Wai Rehabilitation Centre" },
-  { id: 5, name: "Occupational Safety Certificate", type: "Certificate", expiry: "2026-11-01", status: "Valid", center: "PLK Y.C. Cheng Centre" },
-  { id: 6, name: "Electrical Safety Certificate", type: "Certificate", expiry: "2026-08-25", status: "Expiring", center: "PLK Lee Chiu Kong Memorial Centre" },
-  { id: 7, name: "Lift Inspection Certificate", type: "Certificate", expiry: "2026-12-15", status: "Valid", center: "PLK Lee Chiu Kong Memorial Centre" },
-  { id: 8, name: "Water Quality Test Report", type: "Test Report", expiry: "2026-09-15", status: "Valid", center: "PLK Shek Kip Mei Community Services Centre" },
-];
+export { COMPLIANCE_CATEGORIES, COMPLIANCE_DOCS } from './complianceDocs';
 
 export const REPORTS_DATA = [
   { id: 1, name: "Monthly Portfolio Summary - August 2026", date: "2026-08-15", status: "Ready" },

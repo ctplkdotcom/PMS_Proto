@@ -1,5 +1,5 @@
 import { useWorkOrders } from '../context/WorkOrderContext';
-import { CHART_DATA, COMPLIANCE_DOCS } from '../data/constants';
+import { CHART_DATA, COMPLIANCE_DOCS, COMPLIANCE_CATEGORIES } from '../data/constants';
 import {
   TrendingUp, TrendingDown, Building2, DollarSign, ClipboardList, ShieldCheck,
   Clock, AlertTriangle, CheckCircle, ArrowRight,
@@ -32,6 +32,16 @@ export default function Dashboard() {
 
   const recentWOs = workOrders.slice(0, 5);
   const expiringDocs = COMPLIANCE_DOCS.filter((d) => d.status === 'Expiring');
+  const expiredDocs = COMPLIANCE_DOCS.filter((d) => d.status === 'Expired');
+  const totalDocs = COMPLIANCE_DOCS.length;
+  const validDocs = COMPLIANCE_DOCS.filter((d) => d.status === 'Valid').length;
+  const complianceRate = totalDocs > 0 ? Math.round((validDocs / totalDocs) * 100) : 0;
+
+  const categoryStats = COMPLIANCE_CATEGORIES.map((cat) => {
+    const catDocs = COMPLIANCE_DOCS.filter((d) => d.category === cat);
+    const catValid = catDocs.filter((d) => d.status === 'Valid').length;
+    return { category: cat, total: catDocs.length, valid: catValid, pct: catDocs.length > 0 ? Math.round((catValid / catDocs.length) * 100) : 0 };
+  });
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1400 }}>
@@ -39,8 +49,8 @@ export default function Dashboard() {
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         <KPICard title="Occupancy Rate" value="94.2%" icon={Building2} iconBg="var(--info-bg)" change={1.3} trend="up" subtitle="Across all centers" />
         <KPICard title="Monthly Revenue" value="$2.85M" icon={DollarSign} iconBg="var(--success-bg)" change={5.8} trend="up" subtitle="Aug 2026" />
-        <KPICard title="Open Work Orders" value="28" icon={ClipboardList} iconBg="var(--warning-bg)" subtitle="14 closed this month" critical />
-        <KPICard title="Compliance Score" value="97.1%" icon={ShieldCheck} iconBg="var(--critical-bg)" change={-0.4} trend="down" subtitle="2 expiring soon" />
+        <KPICard title="Open Work Orders" value={workOrders.filter((w) => w.status !== 'Completed').length} icon={ClipboardList} iconBg="var(--warning-bg)" subtitle={`${workOrders.filter((w) => w.status === 'Completed').length} completed`} />
+        <KPICard title="Compliance Score" value={`${complianceRate}%`} icon={ShieldCheck} iconBg={expiringDocs.length + expiredDocs.length > 0 ? 'var(--critical-bg)' : 'var(--success-bg)'} change={expiringDocs.length + expiredDocs.length > 0 ? -(expiringDocs.length + expiredDocs.length) : 0} trend={expiringDocs.length + expiredDocs.length > 0 ? 'down' : 'stable'} subtitle={`${expiringDocs.length} expiring, ${expiredDocs.length} expired`} />
       </div>
 
       {/* Charts Row */}
@@ -120,26 +130,50 @@ export default function Dashboard() {
 
         {/* Compliance Alerts */}
         <div style={{ flex: 1, minWidth: 300, background: '#fff', borderRadius: 12, padding: 24, border: '1px solid var(--border)', boxShadow: 'var(--card-shadow)' }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--foreground)', marginBottom: 16 }}>Compliance Alerts</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {expiringDocs.map((doc) => (
-              <div key={doc.id} style={{ padding: 14, borderRadius: 8, border: '1px solid var(--border)', background: '#FEF2F2' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                  <AlertTriangle size={14} color="var(--critical)" />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--critical)' }}>{doc.name}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--foreground)' }}>Compliance Alerts</div>
+            <span style={{ fontSize: 12, fontWeight: 600, color: complianceRate < 90 ? 'var(--critical)' : complianceRate < 95 ? '#B45309' : 'var(--success)' }}>{complianceRate}% compliant</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {expiredDocs.slice(0, 2).map((doc) => (
+              <div key={doc.id} style={{ padding: 12, borderRadius: 8, border: '1px solid #FECACA', background: '#FEF2F2' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <AlertTriangle size={13} color="#DC2626" />
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#DC2626' }}>{doc.name}</span>
                 </div>
-                <div style={{ fontSize: 12, color: '#64748B' }}>Expires: {doc.expiry} &middot; {doc.center}</div>
+                <div style={{ fontSize: 11, color: '#64748B' }}>Expired: {doc.nextInspection} &middot; {doc.center}</div>
               </div>
             ))}
-            {COMPLIANCE_DOCS.filter((d) => d.status === 'Valid').slice(0, 2).map((doc) => (
-              <div key={doc.id} style={{ padding: 14, borderRadius: 8, border: '1px solid var(--border)', background: '#F0FDF4' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                  <CheckCircle size={14} color="var(--success)" />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--success)' }}>{doc.name}</span>
+            {expiringDocs.slice(0, 3).map((doc) => (
+              <div key={doc.id} style={{ padding: 12, borderRadius: 8, border: '1px solid var(--border)', background: '#FFFBEB' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <AlertTriangle size={13} color="#B45309" />
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#B45309' }}>{doc.name}</span>
                 </div>
-                <div style={{ fontSize: 12, color: '#64748B' }}>Valid until: {doc.expiry} &middot; {doc.center}</div>
+                <div style={{ fontSize: 11, color: '#64748B' }}>Due: {doc.nextInspection} &middot; {doc.center}</div>
               </div>
             ))}
+            {expiredDocs.length === 0 && expiringDocs.length === 0 && (
+              <div style={{ padding: 16, borderRadius: 8, border: '1px solid var(--border)', background: '#F0FDF4', textAlign: 'center' }}>
+                <CheckCircle size={16} color="var(--success)" style={{ marginBottom: 4 }} />
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--success)' }}>All documents up to date</div>
+              </div>
+            )}
+          </div>
+          {/* Category Coverage Mini */}
+          <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#64748B', marginBottom: 8 }}>Category Coverage</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {categoryStats.filter((c) => c.total > 0).slice(0, 5).map((c) => (
+                <div key={c.category} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 11, color: '#64748B', width: 100, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.category}</span>
+                  <div style={{ flex: 1, height: 5, borderRadius: 3, background: '#E2E8F0', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${c.pct}%`, borderRadius: 3, background: c.pct === 100 ? 'var(--success)' : '#F59E0B' }} />
+                  </div>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: c.pct === 100 ? 'var(--success)' : '#B45309', width: 32, textAlign: 'right' }}>{c.pct}%</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

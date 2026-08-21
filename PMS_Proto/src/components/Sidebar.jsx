@@ -9,11 +9,12 @@ import {
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard' },
-  { icon: Building2, label: 'Properties' },
+  { icon: Building2, label: 'Properties', children: [
+    { icon: ShieldCheck, label: 'Compliance Vault', badge: 3, badgeCritical: true },
+  ]},
   { icon: ClipboardList, label: 'Work Orders', badge: 42 },
   { icon: Package, label: 'Assets' },
   { icon: Map, label: 'Floor Plan' },
-  { icon: ShieldCheck, label: 'Compliance Vault', badge: 3, badgeCritical: true },
   { icon: ChartColumn, label: 'Reports' },
   { icon: Settings, label: 'Settings' },
 ];
@@ -21,6 +22,11 @@ const NAV_ITEMS = [
 export default function Sidebar({ collapsed, onToggle, activeTab, onNavigate }) {
   const { role, logout } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [expandedParents, setExpandedParents] = useState(['Properties']);
+
+  const toggleParent = (label) => {
+    setExpandedParents((prev) => prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]);
+  };
 
   return (
     <aside
@@ -46,37 +52,75 @@ export default function Sidebar({ collapsed, onToggle, activeTab, onNavigate }) 
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
-        {NAV_ITEMS.map(({ icon: Icon, label, badge, badgeCritical }) => {
+        {NAV_ITEMS.map(({ icon: Icon, label, badge, badgeCritical, children }) => {
           const isActive = label === activeTab;
+          const isExpanded = expandedParents.includes(label);
+          const hasChildren = children && children.length > 0;
           return (
-            <button
-              key={label}
-              onClick={() => onNavigate?.(label)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: collapsed ? '10px 18px' : '10px 16px',
-                background: isActive ? 'var(--sidebar-accent)' : 'transparent',
-                border: isActive ? '1px solid rgba(255,255,255,0.2)' : '1px solid transparent',
-                borderLeft: isActive ? '4px solid var(--sidebar-primary)' : '1px solid transparent',
-                borderRadius: isActive ? 6 : 0,
-                cursor: 'pointer',
-                color: isActive ? '#ffffff' : 'rgba(226,232,240,0.65)',
-                transition: 'background 0.15s, color 0.15s',
-                position: 'relative', margin: '2px 8px',
-                width: 'calc(100% - 16px)',
-              }}
-              onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#F8FAFC'; } }}
-              onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(226,232,240,0.65)'; } }}
-            >
-              <Icon size={16} style={{ flexShrink: 0 }} />
-              {!collapsed && <span style={{ fontSize: 13, fontWeight: isActive ? 600 : 400, whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>{label}</span>}
-              {!collapsed && badge !== undefined && (
-                <span style={{ fontSize: 11, fontWeight: 600, padding: '1px 6px', borderRadius: 10, background: badgeCritical ? 'var(--critical)' : 'rgba(255,255,255,0.12)', color: badgeCritical ? '#fff' : 'rgba(226,232,240,0.9)', lineHeight: 1.6 }}>{badge}</span>
-              )}
-              {collapsed && badge !== undefined && (
-                <span style={{ position: 'absolute', top: 8, right: 8, width: 7, height: 7, borderRadius: '50%', background: badgeCritical ? 'var(--critical)' : 'var(--info)', border: '1.5px solid var(--sidebar)' }} />
-              )}
-            </button>
+            <div key={label}>
+              <button
+                onClick={() => { if (hasChildren) { toggleParent(label); } else { onNavigate?.(label); } }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: collapsed ? '10px 18px' : '10px 16px',
+                  background: isActive && !hasChildren ? 'var(--sidebar-accent)' : 'transparent',
+                  border: isActive && !hasChildren ? '1px solid rgba(255,255,255,0.2)' : '1px solid transparent',
+                  borderLeft: isActive && !hasChildren ? '4px solid var(--sidebar-primary)' : '1px solid transparent',
+                  borderRadius: isActive && !hasChildren ? 6 : 0,
+                  cursor: 'pointer',
+                  color: isActive && !hasChildren ? '#ffffff' : 'rgba(226,232,240,0.65)',
+                  transition: 'background 0.15s, color 0.15s',
+                  position: 'relative', margin: '2px 8px',
+                  width: 'calc(100% - 16px)',
+                }}
+                onMouseEnter={(e) => { if (!isActive || hasChildren) { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#F8FAFC'; } }}
+                onMouseLeave={(e) => { if (!isActive || hasChildren) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(226,232,240,0.65)'; } }}
+              >
+                <Icon size={16} style={{ flexShrink: 0 }} />
+                {!collapsed && <span style={{ fontSize: 13, fontWeight: isActive && !hasChildren ? 600 : 400, whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>{label}</span>}
+                {!collapsed && badge !== undefined && (
+                  <span style={{ fontSize: 11, fontWeight: 600, padding: '1px 6px', borderRadius: 10, background: badgeCritical ? 'var(--critical)' : 'rgba(255,255,255,0.12)', color: badgeCritical ? '#fff' : 'rgba(226,232,240,0.9)', lineHeight: 1.6 }}>{badge}</span>
+                )}
+                {!collapsed && hasChildren && (
+                  <span style={{ fontSize: 10, color: 'rgba(226,232,240,0.4)', transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}>&#9656;</span>
+                )}
+                {collapsed && badge !== undefined && (
+                  <span style={{ position: 'absolute', top: 8, right: 8, width: 7, height: 7, borderRadius: '50%', background: badgeCritical ? 'var(--critical)' : 'var(--info)', border: '1.5px solid var(--sidebar)' }} />
+                )}
+              </button>
+              {/* Children */}
+              {hasChildren && isExpanded && !collapsed && children.map((child) => {
+                const ChildIcon = child.icon;
+                const childActive = child.label === activeTab;
+                return (
+                  <button
+                    key={child.label}
+                    onClick={() => onNavigate?.(child.label)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '8px 16px 8px 42px',
+                      background: childActive ? 'var(--sidebar-accent)' : 'transparent',
+                      border: childActive ? '1px solid rgba(255,255,255,0.2)' : '1px solid transparent',
+                      borderLeft: childActive ? '3px solid var(--sidebar-primary)' : '1px solid transparent',
+                      borderRadius: childActive ? 5 : 0,
+                      cursor: 'pointer',
+                      color: childActive ? '#ffffff' : 'rgba(226,232,240,0.5)',
+                      transition: 'background 0.15s, color 0.15s',
+                      margin: '1px 8px 1px 20px',
+                      width: 'calc(100% - 36px)',
+                    }}
+                    onMouseEnter={(e) => { if (!childActive) { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#F8FAFC'; } }}
+                    onMouseLeave={(e) => { if (!childActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(226,232,240,0.5)'; } }}
+                  >
+                    <ChildIcon size={13} style={{ flexShrink: 0 }} />
+                    <span style={{ fontSize: 12, fontWeight: childActive ? 600 : 400, whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>{child.label}</span>
+                    {child.badge !== undefined && (
+                      <span style={{ fontSize: 10, fontWeight: 600, padding: '1px 5px', borderRadius: 8, background: child.badgeCritical ? 'var(--critical)' : 'rgba(255,255,255,0.1)', color: child.badgeCritical ? '#fff' : 'rgba(226,232,240,0.8)', lineHeight: 1.6 }}>{child.badge}</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           );
         })}
       </nav>

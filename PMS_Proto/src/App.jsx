@@ -9,6 +9,7 @@ import WorkOrderCreate from './pages/WorkOrderCreate';
 import WorkOrderDetail from './pages/WorkOrderDetail';
 import FloorPlan from './pages/FloorPlan';
 import Properties from './pages/Properties';
+import PropertyDetail from './pages/PropertyDetail';
 import Assets from './pages/Assets';
 import ComplianceVault from './pages/ComplianceVault';
 import Reports from './pages/Reports';
@@ -30,16 +31,23 @@ function AppLayout() {
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [subView, setSubView] = useState(null);
   const [viewWOId, setViewWOId] = useState(null);
+  const [viewPropertyId, setViewPropertyId] = useState(null);
 
   const handleNavigate = (tab) => {
     setActiveTab(tab);
     setSubView(null);
     setViewWOId(null);
+    setViewPropertyId(null);
   };
 
   const handleViewWO = (woId) => {
     setViewWOId(woId);
     setSubView('workOrderDetail');
+  };
+
+  const handleViewProperty = (propId) => {
+    setViewPropertyId(propId);
+    setSubView('propertyDetail');
   };
 
   const PageComponent = PAGES[activeTab] || Dashboard;
@@ -65,10 +73,16 @@ function AppLayout() {
               woId={viewWOId}
               onBack={() => { setSubView(null); setViewWOId(null); }}
             />
+          ) : subView === 'propertyDetail' ? (
+            <PropertyDetail
+              propertyId={viewPropertyId}
+              onBack={() => { setSubView(null); setViewPropertyId(null); }}
+            />
           ) : (
             <PageComponent
               onCreateWorkOrder={() => setSubView('workOrderCreate')}
               onViewWO={handleViewWO}
+              onViewProperty={handleViewProperty}
             />
           )}
         </main>
