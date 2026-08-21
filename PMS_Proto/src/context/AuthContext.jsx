@@ -56,30 +56,27 @@ function LoginScreen({ onLogin }) {
           <button disabled style={{ marginTop: 8, padding: 14, backgroundColor: '#94A3B8', color: '#fff', borderRadius: 6, border: 'none', fontSize: 15, fontWeight: 600 }}>{t('login.ssoButton')}</button>
         </div>
       </div>
-      <div style={{ flex: 1, padding: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflowY: 'auto' }}>
+      <div style={{ flex: 1, padding: 60, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', marginBottom: 24 }}>{t('login.quickTitle')}</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           {Object.entries(ROLES).map(([key, role]) => (
             <button
               key={key}
               onClick={() => onLogin(key)}
               style={{
-                display: 'flex', flexDirection: 'column', gap: 6,
-                padding: '20px 24px', backgroundColor: '#fff',
-                border: '1px solid #E2E8F0', borderRadius: 12,
+                display: 'flex', alignItems: 'center', gap: 12,
+                padding: '14px 18px', backgroundColor: '#fff',
+                border: '1px solid #E2E8F0', borderRadius: 10,
                 cursor: 'pointer', textAlign: 'left',
                 transition: 'all 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
               }}
-              onMouseOver={(e) => (e.currentTarget.style.borderColor = '#94A3B8')}
-              onMouseOut={(e) => (e.currentTarget.style.borderColor = '#E2E8F0')}
+              onMouseOver={(e) => { e.currentTarget.style.borderColor = '#94A3B8'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)'; }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 32, height: 32, backgroundColor: '#EFF6FF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <span style={{ fontSize: 16, fontWeight: 700, color: '#0F172A' }}>{role.label}</span>
+              <div style={{ width: 32, height: 32, backgroundColor: '#EFF6FF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               </div>
-              <span style={{ fontSize: 13, color: '#64748B', paddingLeft: 44 }}>{role.subtext}</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{role.label}</span>
             </button>
           ))}
         </div>
