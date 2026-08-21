@@ -129,7 +129,7 @@ function ProfileSection({ role, t }) {
           <Field label={t('settings.profile.phone')} defaultValue="+852 " placeholder="+852 XXXX XXXX" />
           <Field label={t('settings.profile.employeeId')} defaultValue={role || ''} disabled />
           <Field label={t('settings.profile.role')} defaultValue={r ? r.label : ''} disabled />
-          <Field label={t('settings.profile.department')} defaultValue="Social Services Division" />
+          <Field label={t('settings.profile.department')} defaultValue="Social Services Division" disabled />
         </div>
       </div>
 
@@ -144,14 +144,6 @@ function ProfileSection({ role, t }) {
               <option>{'\u7E41\u9AD4\u4E2D\u6587'}</option>
             </select>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('settings.profile.timezone')}</label>
-            <select style={selectStyle}>
-              <option>Asia/Hong_Kong (HKT, UTC+8)</option>
-              <option>Asia/Shanghai (CST, UTC+8)</option>
-              <option>UTC (UTC+0)</option>
-            </select>
-          </div>
         </div>
       </div>
 
@@ -161,12 +153,17 @@ function ProfileSection({ role, t }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 400 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>Current Password</label>
-            <input type={showPassword ? 'text' : 'password'} placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" style={inputStyle} />
+            <div style={{ position: 'relative' }}>
+              <input type={showPassword ? 'text' : 'password'} placeholder="Enter current password" style={{ ...inputStyle, paddingRight: 38 }} />
+              <button onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}>
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>New Password</label>
             <div style={{ position: 'relative' }}>
-              <input type={showPassword ? 'text' : 'password'} placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" style={inputStyle} />
+              <input type={showPassword ? 'text' : 'password'} placeholder="Enter new password" style={{ ...inputStyle, paddingRight: 38 }} />
               <button onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}>
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -174,7 +171,15 @@ function ProfileSection({ role, t }) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>Confirm New Password</label>
-            <input type={showPassword ? 'text' : 'password'} placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" style={inputStyle} />
+            <div style={{ position: 'relative' }}>
+              <input type={showPassword ? 'text' : 'password'} placeholder="Re-enter new password" style={{ ...inputStyle, paddingRight: 38 }} />
+              <button onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}>
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+          <div style={{ fontSize: 11, color: '#94A3B8', lineHeight: 1.5 }}>
+            Password must be at least 8 characters, including uppercase, lowercase, and a number.
           </div>
         </div>
       </div>
@@ -405,9 +410,6 @@ function NotificationsSection({ t }) {
     comments: { email: false, inApp: true, push: true },
   });
 
-  const [quietHours, setQuietHours] = useState({ enabled: true, start: '22:00', end: '07:00' });
-  const [digest, setDigest] = useState('daily');
-
   const toggleChannel = (type, channel) => {
     setChannels((prev) => ({ ...prev, [type]: { ...prev[type], [channel]: !prev[type][channel] } }));
   };
@@ -459,47 +461,6 @@ function NotificationsSection({ t }) {
         </table>
       </div>
 
-      {/* Quiet Hours */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.notif.quietHours')}</div>
-            <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{t('settings.notif.quietHoursDesc')}</div>
-          </div>
-          <ToggleSwitch on={quietHours.enabled} onClick={() => setQuietHours((p) => ({ ...p, enabled: !p.enabled }))} />
-        </div>
-        {quietHours.enabled && (
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center', paddingLeft: 4 }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8' }}>{t('settings.notif.quietStart')}</label>
-              <input type="time" value={quietHours.start} onChange={(e) => setQuietHours((p) => ({ ...p, start: e.target.value }))} style={{ ...inputStyle, width: 130 }} />
-            </div>
-            <span style={{ color: '#94A3B8', marginTop: 16 }}>–</span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8' }}>{t('settings.notif.quietEnd')}</label>
-              <input type="time" value={quietHours.end} onChange={(e) => setQuietHours((p) => ({ ...p, end: e.target.value }))} style={{ ...inputStyle, width: 130 }} />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Digest */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)', marginBottom: 10 }}>{t('settings.notif.digest')}</div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            { value: 'none', label: t('settings.notif.digestNone') },
-            { value: 'daily', label: t('settings.notif.digestDaily') },
-            { value: 'weekly', label: t('settings.notif.digestWeekly') },
-          ].map(({ value, label }) => (
-            <button key={value} onClick={() => setDigest(value)}
-              style={{ padding: '8px 16px', fontSize: 12, fontWeight: 600, borderRadius: 8, border: `1px solid ${digest === value ? 'var(--info)' : 'var(--border)'}`, background: digest === value ? 'var(--info-bg)' : '#fff', color: digest === value ? 'var(--info)' : '#64748B', cursor: 'pointer', transition: 'all 0.15s' }}>
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <button style={primaryBtnStyle}><Save size={14} /> {t('settings.notif.save')}</button>
     </div>
   );
@@ -509,178 +470,39 @@ function NotificationsSection({ t }) {
    LOCALIZATION SECTION
    ═══════════════════════════════════════════════════════════ */
 function LocalizationSection({ t, language, setLanguage }) {
-  const [dateFormat, setDateFormat] = useState('DD/MM/YYYY');
-  const [timeFormat, setTimeFormat] = useState('24');
-  const [currency, setCurrency] = useState('HKD');
-  const [timezone, setTimezone] = useState('Asia/Hong_Kong');
-
-  const sampleDate = new Date(2026, 7, 21);
-  const sampleTime = new Date(2026, 7, 21, 14, 30, 0);
-
-  const formatDate = (d) => {
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const yyyy = d.getFullYear();
-    switch (dateFormat) {
-      case 'DD/MM/YYYY': return `${dd}/${mm}/${yyyy}`;
-      case 'MM/DD/YYYY': return `${mm}/${dd}/${yyyy}`;
-      case 'YYYY-MM-DD': return `${yyyy}-${mm}-${dd}`;
-      default: return `${dd}/${mm}/${yyyy}`;
-    }
-  };
-
-  const formatDateSample = (fmt) => {
-    const dd = '21', mm = '08', yyyy = '2026';
-    switch (fmt) {
-      case 'DD/MM/YYYY': return `${dd}/${mm}/${yyyy}`;
-      case 'MM/DD/YYYY': return `${mm}/${dd}/${yyyy}`;
-      case 'YYYY-MM-DD': return `${yyyy}-${mm}-${dd}`;
-      default: return `${dd}/${mm}/${yyyy}`;
-    }
-  };
-
-  const formatTime = (d) => {
-    const h = d.getHours();
-    const m = String(d.getMinutes()).padStart(2, '0');
-    if (timeFormat === '24') return `${String(h).padStart(2, '0')}:${m}`;
-    const period = h >= 12 ? 'PM' : 'AM';
-    const h12 = h % 12 || 12;
-    return `${h12}:${m} ${period}`;
-  };
-
-  const formatTimeSample = (fmt) => fmt === '24' ? '14:30' : '2:30 PM';
-
-  const formatCurrency = (amt) => {
-    const sym = { HKD: 'HK$', USD: 'US$', EUR: '\u20AC', GBP: '\u00A3', CNY: '\u00A5' };
-    return `${sym[currency] || '$'}${amt.toLocaleString()}`;
-  };
-
-  const formatNumber = (n) => {
-    if (currency === 'EUR') return n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  };
-
   return (
     <div>
       <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--foreground)', marginBottom: 24 }}>{t('settings.loc.title')}</h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, maxWidth: 800 }}>
-        {/* Left Column — Settings */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-
-          {/* ── Language ── */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <Globe size={16} style={{ color: 'var(--info)' }} />
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.sectionLanguage')}</span>
-            </div>
-            <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.languageHelper')}</p>
-            <select value={language} onChange={(e) => setLanguage(e.target.value)} style={selectStyle}>
-              <option value="en">English</option>
-              <option value="zh">{'\u7E41\u9AD4\u4E2D\u6587'} (Traditional Chinese)</option>
-            </select>
-          </div>
-
-          <div style={{ borderTop: '1px solid var(--border)' }} />
-
-          {/* ── Region & Formats ── */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <Globe size={16} style={{ color: 'var(--info)' }} />
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.sectionRegion')}</span>
-            </div>
-            <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.regionHelper')}</p>
-
-            {/* Date Format — Segmented with live sample */}
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6, display: 'block' }}>{t('settings.loc.dateFormat')}</label>
-              <div style={{ display: 'flex', gap: 0, border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
-                {['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'].map((fmt) => (
-                  <button key={fmt} onClick={() => setDateFormat(fmt)}
-                    style={{ flex: 1, padding: '8px 0', fontSize: 12, fontWeight: 600, border: 'none', borderRight: fmt !== 'YYYY-MM-DD' ? '1px solid var(--border)' : 'none', background: dateFormat === fmt ? 'var(--info-bg)' : '#fff', color: dateFormat === fmt ? 'var(--info)' : '#64748B', cursor: 'pointer', transition: 'all 0.15s' }}>
-                    {fmt}
-                    <div style={{ fontSize: 10, fontWeight: 400, color: dateFormat === fmt ? 'var(--info)' : '#94A3B8', marginTop: 2 }}>{formatDateSample(fmt)}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Time Format — Segmented with live sample */}
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6, display: 'block' }}>{t('settings.loc.timeFormat')}</label>
-              <div style={{ display: 'flex', gap: 0, border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
-                {[{ value: '24', label: t('settings.loc.hour24') }, { value: '12', label: t('settings.loc.hour12') }].map(({ value, label }, i) => (
-                  <button key={value} onClick={() => setTimeFormat(value)}
-                    style={{ flex: 1, padding: '8px 0', fontSize: 12, fontWeight: 600, border: 'none', borderRight: i === 0 ? '1px solid var(--border)' : 'none', background: timeFormat === value ? 'var(--info-bg)' : '#fff', color: timeFormat === value ? 'var(--info)' : '#64748B', cursor: 'pointer', transition: 'all 0.15s' }}>
-                    {label}
-                    <div style={{ fontSize: 10, fontWeight: 400, color: timeFormat === value ? 'var(--info)' : '#94A3B8', marginTop: 2 }}>{formatTimeSample(value)}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Currency */}
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6, display: 'block' }}>{t('settings.loc.currency')}</label>
-              <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={selectStyle}>
-                <option value="HKD">HKD — Hong Kong Dollar (HK$)</option>
-                <option value="USD">USD — US Dollar (US$)</option>
-                <option value="EUR">EUR — Euro (\u20AC)</option>
-                <option value="GBP">GBP — Pound Sterling (\u00A3)</option>
-                <option value="CNY">CNY — Chinese Yuan (\u00A5)</option>
-              </select>
-            </div>
-          </div>
-
-          <div style={{ borderTop: '1px solid var(--border)' }} />
-
-          {/* ── Time Zone ── */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <Globe size={16} style={{ color: 'var(--info)' }} />
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.sectionTimezone')}</span>
-            </div>
-            <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.timezoneHelper')}</p>
-            <select value={timezone} onChange={(e) => setTimezone(e.target.value)} style={selectStyle}>
-              <option value="Asia/Hong_Kong">Asia/Hong_Kong — HKT (UTC+8)</option>
-              <option value="Asia/Shanghai">Asia/Shanghai — CST (UTC+8)</option>
-              <option value="Asia/Tokyo">Asia/Tokyo — JST (UTC+9)</option>
-              <option value="Asia/Singapore">Asia/Singapore — SGT (UTC+8)</option>
-              <option value="UTC">UTC — Coordinated Universal Time (UTC+0)</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Right Column — Live Preview */}
+      <div style={{ maxWidth: 400 }}>
+        {/* ── Language ── */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <Eye size={16} style={{ color: 'var(--info)' }} />
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.preview')}</span>
+            <Globe size={16} style={{ color: 'var(--info)' }} />
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.sectionLanguage')}</span>
           </div>
-          <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.previewHelper')}</p>
-          <div style={{ border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
-            {/* Preview Header */}
-            <div style={{ padding: '10px 16px', background: '#F8FAFC', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--success)' }} />
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>WO-2026-0892</span>
+          <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.languageHelper')}</p>
+          <select value={language} onChange={(e) => setLanguage(e.target.value)} style={selectStyle}>
+            <option value="en">English</option>
+            <option value="zh">{'\u7E41\u9AD4\u4E2D\u6587'} (Traditional Chinese)</option>
+          </select>
+        </div>
+
+        {/* ── Fixed Format Info ── */}
+        <div style={{ marginTop: 20, padding: 14, background: '#F8FAFC', borderRadius: 8, border: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--foreground)', marginBottom: 8 }}>System Format Standards</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <span style={{ color: '#64748B' }}>Date Format</span>
+              <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>YYYY-MM-DD</span>
             </div>
-            {/* Preview Body */}
-            <div style={{ padding: 16 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--foreground)', marginBottom: 12 }}>Fire Suppression System Servicing</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <PreviewRow label={t('settings.loc.sampleCreated')} value={formatDate(sampleDate)} />
-                <PreviewRow label={t('settings.loc.sampleTime')} value={formatTime(sampleTime)} />
-                <PreviewRow label={t('settings.loc.sampleBudget')} value={formatCurrency(28000)} />
-                <PreviewRow label={t('settings.loc.sampleNumber')} value={formatNumber(1234.56)} />
-              </div>
-              <div style={{ borderTop: '1px solid var(--border)', paddingTop: 10, marginTop: 10, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <div style={{ fontSize: 11, color: '#94A3B8' }}>
-                  <span style={{ fontWeight: 600 }}>{t('settings.loc.sectionTimezone')}:</span> {timezone}
-                </div>
-                <div style={{ fontSize: 11, color: '#94A3B8' }}>
-                  <span style={{ fontWeight: 600 }}>{t('settings.loc.language')}:</span> {language === 'zh' ? '\u7E41\u9AD4\u4E2D\u6587' : 'English'}
-                </div>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <span style={{ color: '#64748B' }}>Time Format</span>
+              <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>24-hour (HH:mm)</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <span style={{ color: '#64748B' }}>Currency</span>
+              <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>HK$</span>
             </div>
           </div>
         </div>
@@ -690,15 +512,6 @@ function LocalizationSection({ t, language, setLanguage }) {
         <button style={primaryBtnStyle}><Save size={14} /> {t('settings.loc.save')}</button>
         <button style={ghostBtnStyle}>{t('settings.loc.reset')}</button>
       </div>
-    </div>
-  );
-}
-
-function PreviewRow({ label, value }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <span style={{ fontSize: 12, color: '#64748B' }}>{label}:</span>
-      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--foreground)', fontVariantNumeric: 'tabular-nums' }}>{value}</span>
     </div>
   );
 }
