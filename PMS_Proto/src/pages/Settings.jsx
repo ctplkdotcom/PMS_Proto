@@ -488,24 +488,6 @@ function LocalizationSection({ t, language, setLanguage }) {
           </select>
         </div>
 
-        {/* ── Fixed Format Info ── */}
-        <div style={{ marginTop: 20, padding: 14, background: '#F8FAFC', borderRadius: 8, border: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--foreground)', marginBottom: 8 }}>System Format Standards</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-              <span style={{ color: '#64748B' }}>Date Format</span>
-              <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>YYYY-MM-DD</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-              <span style={{ color: '#64748B' }}>Time Format</span>
-              <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>24-hour (HH:mm)</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-              <span style={{ color: '#64748B' }}>Currency</span>
-              <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>HK$</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginTop: 28 }}>
