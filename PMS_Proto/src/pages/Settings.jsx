@@ -529,6 +529,16 @@ function LocalizationSection({ t, language, setLanguage }) {
     }
   };
 
+  const formatDateSample = (fmt) => {
+    const dd = '21', mm = '08', yyyy = '2026';
+    switch (fmt) {
+      case 'DD/MM/YYYY': return `${dd}/${mm}/${yyyy}`;
+      case 'MM/DD/YYYY': return `${mm}/${dd}/${yyyy}`;
+      case 'YYYY-MM-DD': return `${yyyy}-${mm}-${dd}`;
+      default: return `${dd}/${mm}/${yyyy}`;
+    }
+  };
+
   const formatTime = (d) => {
     const h = d.getHours();
     const m = String(d.getMinutes()).padStart(2, '0');
@@ -538,96 +548,157 @@ function LocalizationSection({ t, language, setLanguage }) {
     return `${h12}:${m} ${period}`;
   };
 
+  const formatTimeSample = (fmt) => fmt === '24' ? '14:30' : '2:30 PM';
+
   const formatCurrency = (amt) => {
-    if (currency === 'HKD') return `HK$${amt.toLocaleString()}`;
-    if (currency === 'USD') return `US$${amt.toLocaleString()}`;
-    return `$${amt.toLocaleString()}`;
+    const sym = { HKD: 'HK$', USD: 'US$', EUR: '\u20AC', GBP: '\u00A3', CNY: '\u00A5' };
+    return `${sym[currency] || '$'}${amt.toLocaleString()}`;
+  };
+
+  const formatNumber = (n) => {
+    if (currency === 'EUR') return n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   return (
     <div>
-      <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--foreground)', marginBottom: 20 }}>{t('settings.loc.title')}</h2>
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--foreground)', marginBottom: 24 }}>{t('settings.loc.title')}</h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 700 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, maxWidth: 800 }}>
         {/* Left Column — Settings */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('settings.loc.language')}</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+          {/* ── Language ── */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <Globe size={16} style={{ color: 'var(--info)' }} />
+              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.sectionLanguage')}</span>
+            </div>
+            <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.languageHelper')}</p>
             <select value={language} onChange={(e) => setLanguage(e.target.value)} style={selectStyle}>
               <option value="en">English</option>
-              <option value="zh">{'\u7E41\u9AD4\u4E2D\u6587'}</option>
+              <option value="zh">{'\u7E41\u9AD4\u4E2D\u6587'} (Traditional Chinese)</option>
             </select>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('settings.loc.dateFormat')}</label>
-            <select value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} style={selectStyle}>
-              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-            </select>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('settings.loc.timeFormat')}</label>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {[
-                { value: '12', label: t('settings.loc.hour12') },
-                { value: '24', label: t('settings.loc.hour24') },
-              ].map(({ value, label }) => (
-                <button key={value} onClick={() => setTimeFormat(value)}
-                  style={{ padding: '8px 16px', fontSize: 12, fontWeight: 600, borderRadius: 8, border: `1px solid ${timeFormat === value ? 'var(--info)' : 'var(--border)'}`, background: timeFormat === value ? 'var(--info-bg)' : '#fff', color: timeFormat === value ? 'var(--info)' : '#64748B', cursor: 'pointer' }}>
-                  {label}
-                </button>
-              ))}
+
+          <div style={{ borderTop: '1px solid var(--border)' }} />
+
+          {/* ── Region & Formats ── */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <Globe size={16} style={{ color: 'var(--info)' }} />
+              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.sectionRegion')}</span>
+            </div>
+            <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.regionHelper')}</p>
+
+            {/* Date Format — Segmented with live sample */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6, display: 'block' }}>{t('settings.loc.dateFormat')}</label>
+              <div style={{ display: 'flex', gap: 0, border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+                {['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'].map((fmt) => (
+                  <button key={fmt} onClick={() => setDateFormat(fmt)}
+                    style={{ flex: 1, padding: '8px 0', fontSize: 12, fontWeight: 600, border: 'none', borderRight: fmt !== 'YYYY-MM-DD' ? '1px solid var(--border)' : 'none', background: dateFormat === fmt ? 'var(--info-bg)' : '#fff', color: dateFormat === fmt ? 'var(--info)' : '#64748B', cursor: 'pointer', transition: 'all 0.15s' }}>
+                    {fmt}
+                    <div style={{ fontSize: 10, fontWeight: 400, color: dateFormat === fmt ? 'var(--info)' : '#94A3B8', marginTop: 2 }}>{formatDateSample(fmt)}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Time Format — Segmented with live sample */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6, display: 'block' }}>{t('settings.loc.timeFormat')}</label>
+              <div style={{ display: 'flex', gap: 0, border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+                {[{ value: '24', label: t('settings.loc.hour24') }, { value: '12', label: t('settings.loc.hour12') }].map(({ value, label }, i) => (
+                  <button key={value} onClick={() => setTimeFormat(value)}
+                    style={{ flex: 1, padding: '8px 0', fontSize: 12, fontWeight: 600, border: 'none', borderRight: i === 0 ? '1px solid var(--border)' : 'none', background: timeFormat === value ? 'var(--info-bg)' : '#fff', color: timeFormat === value ? 'var(--info)' : '#64748B', cursor: 'pointer', transition: 'all 0.15s' }}>
+                    {label}
+                    <div style={{ fontSize: 10, fontWeight: 400, color: timeFormat === value ? 'var(--info)' : '#94A3B8', marginTop: 2 }}>{formatTimeSample(value)}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Currency */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6, display: 'block' }}>{t('settings.loc.currency')}</label>
+              <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={selectStyle}>
+                <option value="HKD">HKD — Hong Kong Dollar (HK$)</option>
+                <option value="USD">USD — US Dollar (US$)</option>
+                <option value="EUR">EUR — Euro (\u20AC)</option>
+                <option value="GBP">GBP — Pound Sterling (\u00A3)</option>
+                <option value="CNY">CNY — Chinese Yuan (\u00A5)</option>
+              </select>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('settings.loc.currency')}</label>
-            <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={selectStyle}>
-              <option value="HKD">HKD ($)</option>
-              <option value="USD">USD ($)</option>
-            </select>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('settings.loc.timezone')}</label>
+
+          <div style={{ borderTop: '1px solid var(--border)' }} />
+
+          {/* ── Time Zone ── */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <Globe size={16} style={{ color: 'var(--info)' }} />
+              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.sectionTimezone')}</span>
+            </div>
+            <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.timezoneHelper')}</p>
             <select value={timezone} onChange={(e) => setTimezone(e.target.value)} style={selectStyle}>
-              <option value="Asia/Hong_Kong">Asia/Hong_Kong (HKT, UTC+8)</option>
-              <option value="Asia/Shanghai">Asia/Shanghai (CST, UTC+8)</option>
-              <option value="UTC">UTC (UTC+0)</option>
+              <option value="Asia/Hong_Kong">Asia/Hong_Kong — HKT (UTC+8)</option>
+              <option value="Asia/Shanghai">Asia/Shanghai — CST (UTC+8)</option>
+              <option value="Asia/Tokyo">Asia/Tokyo — JST (UTC+9)</option>
+              <option value="Asia/Singapore">Asia/Singapore — SGT (UTC+8)</option>
+              <option value="UTC">UTC — Coordinated Universal Time (UTC+0)</option>
             </select>
           </div>
         </div>
 
         {/* Right Column — Live Preview */}
         <div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#475569', marginBottom: 10 }}>{t('settings.loc.preview')}</div>
-          <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 16, background: '#F8FAFC' }}>
-            <div style={{ fontSize: 12, color: '#94A3B8', marginBottom: 8 }}>WO-2026-0892 — Fire Suppression System</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 12, color: '#64748B' }}>Created:</span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--foreground)' }}>{formatDate(sampleDate)}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <Eye size={16} style={{ color: 'var(--info)' }} />
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.preview')}</span>
+          </div>
+          <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.previewHelper')}</p>
+          <div style={{ border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
+            {/* Preview Header */}
+            <div style={{ padding: '10px 16px', background: '#F8FAFC', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--success)' }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>WO-2026-0892</span>
+            </div>
+            {/* Preview Body */}
+            <div style={{ padding: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--foreground)', marginBottom: 12 }}>Fire Suppression System Servicing</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <PreviewRow label={t('settings.loc.sampleCreated')} value={formatDate(sampleDate)} />
+                <PreviewRow label={t('settings.loc.sampleTime')} value={formatTime(sampleTime)} />
+                <PreviewRow label={t('settings.loc.sampleBudget')} value={formatCurrency(28000)} />
+                <PreviewRow label={t('settings.loc.sampleNumber')} value={formatNumber(1234.56)} />
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 12, color: '#64748B' }}>Time:</span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--foreground)' }}>{formatTime(sampleTime)}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 12, color: '#64748B' }}>Budget:</span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--foreground)' }}>{formatCurrency(28000)}</span>
-              </div>
-              <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }}>
-                <div style={{ fontSize: 11, color: '#94A3B8' }}>Timezone: {timezone}</div>
-                <div style={{ fontSize: 11, color: '#94A3B8' }}>Language: {language === 'zh' ? '\u7E41\u9AD4\u4E2D\u6587' : 'English'}</div>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: 10, marginTop: 10, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <div style={{ fontSize: 11, color: '#94A3B8' }}>
+                  <span style={{ fontWeight: 600 }}>{t('settings.loc.sectionTimezone')}:</span> {timezone}
+                </div>
+                <div style={{ fontSize: 11, color: '#94A3B8' }}>
+                  <span style={{ fontWeight: 600 }}>{t('settings.loc.language')}:</span> {language === 'zh' ? '\u7E41\u9AD4\u4E2D\u6587' : 'English'}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 24 }}>
+      <div style={{ display: 'flex', gap: 8, marginTop: 28 }}>
         <button style={primaryBtnStyle}><Save size={14} /> {t('settings.loc.save')}</button>
-        <button style={ghostBtnStyle}>{t('settings.loc.reset') || 'Reset to Defaults'}</button>
+        <button style={ghostBtnStyle}>{t('settings.loc.reset')}</button>
       </div>
+    </div>
+  );
+}
+
+function PreviewRow({ label, value }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <span style={{ fontSize: 12, color: '#64748B' }}>{label}:</span>
+      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--foreground)', fontVariantNumeric: 'tabular-nums' }}>{value}</span>
     </div>
   );
 }

@@ -1,10 +1,18 @@
 import { useState, useMemo } from 'react';
 import { PROPERTIES, COMPLIANCE_DOCS } from '../data/constants';
 import { useTranslation } from '../i18n/LanguageContext';
-import { Plus, Search, Eye, Pencil, X, ArrowUpDown, ArrowUp, ArrowDown, MapPin, Building2, Phone, Mail, User, FileText, Calendar, Ruler } from 'lucide-react';
+import { Plus, Search, Eye, Pencil, X, ArrowUpDown, ArrowUp, ArrowDown, MapPin, Building2, Phone, Mail, User, FileText, Calendar, Ruler, HeartPulse, HandHelping, Heart, Baby, Users, Ban } from 'lucide-react';
 
 const ALL_TYPES = ['All', 'Headquarters', 'Community Centre', 'Health Centre', 'Rehabilitation Centre', 'Elderly Home', 'Child Care Centre'];
-const ALL_DISTRICTS = ['All', 'Hong Kong Island', 'Kowloon', 'New Territories'];
+
+const TYPE_CONFIG = {
+  Headquarters:        { icon: Building2,     color: '#1E40AF', bg: '#EFF6FF' },
+  'Community Centre':  { icon: Users,         color: '#0D9488', bg: '#F0FDFA' },
+  'Health Centre':     { icon: HeartPulse,    color: '#DC2626', bg: '#FEF2F2' },
+  'Rehabilitation Centre': { icon: HandHelping, color: '#7C3AED', bg: '#F5F3FF' },
+  'Elderly Home':      { icon: Heart,         color: '#EA580C', bg: '#FFF7ED' },
+  'Child Care Centre': { icon: Baby,          color: '#DB2777', bg: '#FDF2F8' },
+};
 
 function SortIcon({ col, sortCol, sortDir }) {
   if (sortCol !== col) return <ArrowUpDown size={11} color="#CBD5E1" />;
@@ -35,11 +43,21 @@ function FilterDropdown({ label, options, selected, onSelect, counts }) {
   );
 }
 
+function TypeBadge({ type }) {
+  const cfg = TYPE_CONFIG[type] || { icon: Building2, color: '#64748B', bg: '#F1F5F9' };
+  const Icon = cfg.icon;
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, padding: '4px 10px', borderRadius: 8, background: cfg.bg, color: cfg.color, whiteSpace: 'nowrap' }}>
+      <Icon size={13} strokeWidth={2.2} />
+      {type}
+    </span>
+  );
+}
+
 export default function Properties({ onViewProperty, selectedCenter }) {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
-  const [districtFilter, setDistrictFilter] = useState('All');
   const [sortCol, setSortCol] = useState('name');
   const [sortDir, setSortDir] = useState('asc');
   const [previewProp, setPreviewProp] = useState(null);
@@ -54,19 +72,12 @@ export default function Properties({ onViewProperty, selectedCenter }) {
     return c;
   }, [baseProperties]);
 
-  const districtCounts = useMemo(() => {
-    const c = { All: baseProperties.length };
-    baseProperties.forEach((p) => { c[p.district] = (c[p.district] || 0) + 1; });
-    return c;
-  }, [baseProperties]);
-
   const filtered = useMemo(() => {
     let list = baseProperties.filter((p) => {
       if (typeFilter !== 'All' && p.type !== typeFilter) return false;
-      if (districtFilter !== 'All' && p.district !== districtFilter) return false;
       if (search) {
         const q = search.toLowerCase();
-        return p.name.toLowerCase().includes(q) || p.address.toLowerCase().includes(q) || p.district.toLowerCase().includes(q) || p.contact.manager.toLowerCase().includes(q);
+        return p.name.toLowerCase().includes(q) || p.address.toLowerCase().includes(q) || p.type.toLowerCase().includes(q);
       }
       return true;
     });
@@ -77,7 +88,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
       return sortDir === 'asc' ? cmp : -cmp;
     });
     return list;
-  }, [baseProperties, search, typeFilter, districtFilter, sortCol, sortDir]);
+  }, [baseProperties, search, typeFilter, sortCol, sortDir]);
 
   const handleSort = (col) => {
     if (sortCol === col) setSortDir((d) => d === 'asc' ? 'desc' : 'asc');
@@ -86,7 +97,6 @@ export default function Properties({ onViewProperty, selectedCenter }) {
 
   const activeFilters = [];
   if (typeFilter !== 'All') activeFilters.push({ key: 'type', label: `Type: ${typeFilter}`, clear: () => setTypeFilter('All') });
-  if (districtFilter !== 'All') activeFilters.push({ key: 'district', label: `District: ${districtFilter}`, clear: () => setDistrictFilter('All') });
 
   const getPropDocs = (propName) => COMPLIANCE_DOCS.filter((d) => d.center === propName);
 
@@ -109,7 +119,6 @@ export default function Properties({ onViewProperty, selectedCenter }) {
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('properties.searchPlaceholder')} style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13, background: '#fff', outline: 'none' }} />
         </div>
         <FilterDropdown label="Type" options={ALL_TYPES} selected={typeFilter} onSelect={setTypeFilter} counts={typeCounts} />
-        <FilterDropdown label="District" options={ALL_DISTRICTS} selected={districtFilter} onSelect={setDistrictFilter} counts={districtCounts} />
       </div>
 
       {/* Active Filter Chips */}
@@ -121,7 +130,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
               <button onClick={f.clear} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'var(--primary)' }}><X size={12} /></button>
             </span>
           ))}
-          <button onClick={() => { setTypeFilter('All'); setDistrictFilter('All'); }} style={{ fontSize: 12, color: '#64748B', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}>Clear all</button>
+          <button onClick={() => setTypeFilter('All')} style={{ fontSize: 12, color: '#64748B', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}>{t('compliance.clearAll')}</button>
         </div>
       )}
 
@@ -131,20 +140,13 @@ export default function Properties({ onViewProperty, selectedCenter }) {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
-                {[
-                  { key: 'name', label: t('properties.col.name'), width: undefined },
-                  { key: 'type', label: t('properties.col.type'), width: 140 },
-                  { key: 'district', label: t('properties.col.district'), width: 150 },
-                  { key: 'floorArea', label: t('properties.col.floorArea'), width: 110 },
-                  { key: 'yearBuilt', label: t('properties.col.yearBuilt'), width: 100 },
-                  { key: 'status', label: t('properties.col.status'), width: 90 },
-                  { key: 'contact', label: t('properties.col.contact'), width: 150 },
-                ].map((col) => (
-                  <th key={col.key} onClick={() => handleSort(col.key)} style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', width: col.width, background: sortCol === col.key ? '#F1F5F9' : undefined }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>{col.label} <SortIcon col={col.key} sortCol={sortCol} sortDir={sortDir} /></span>
-                  </th>
-                ))}
-                <th style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('properties.col.actions')}</th>
+                <th onClick={() => handleSort('name')} style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', background: sortCol === 'name' ? '#F1F5F9' : undefined }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>{t('properties.col.name')} <SortIcon col="name" sortCol={sortCol} sortDir={sortDir} /></span>
+                </th>
+                <th onClick={() => handleSort('type')} style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', width: 220, background: sortCol === 'type' ? '#F1F5F9' : undefined }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>{t('properties.col.type')} <SortIcon col="type" sortCol={sortCol} sortDir={sortDir} /></span>
+                </th>
+                <th style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'right', textTransform: 'uppercase', letterSpacing: '0.05em', width: 120 }}>{t('properties.col.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -152,23 +154,25 @@ export default function Properties({ onViewProperty, selectedCenter }) {
                 <tr key={prop.id} style={{ borderBottom: '1px solid var(--border)' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
                   <td style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div style={{ width: 34, height: 34, borderRadius: 8, background: 'var(--info-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Building2 size={16} color="var(--info)" /></div>
+                      <div style={{ width: 34, height: 34, borderRadius: 8, background: (TYPE_CONFIG[prop.type] || TYPE_CONFIG.Headquarters).bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        {(() => { const Cfg = TYPE_CONFIG[prop.type] || TYPE_CONFIG.Headquarters; const Ic = Cfg.icon; return <Ic size={16} color={Cfg.color} />; })()}
+                      </div>
                       <div>
                         <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--foreground)' }}>{prop.name}</div>
                         <div style={{ fontSize: 11, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: 3, marginTop: 2 }}><MapPin size={10} />{prop.address}</div>
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '12px 16px' }}><span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 10, background: '#F1F5F9', color: '#475569' }}>{prop.type}</span></td>
-                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#64748B' }}>{prop.district}</td>
-                  <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 500, color: 'var(--foreground)', textAlign: 'right' }}>{prop.floorArea.toLocaleString()} sqm</td>
-                  <td style={{ padding: '12px 16px', fontSize: 13, color: '#64748B' }}>{prop.yearBuilt}</td>
-                  <td style={{ padding: '12px 16px' }}><span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 10, background: prop.status === 'Active' ? 'var(--success-bg)' : '#F1F5F9', color: prop.status === 'Active' ? 'var(--success)' : '#64748B' }}>{prop.status}</span></td>
-                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#475569' }}>{prop.contact.manager}</td>
+                  <td style={{ padding: '12px 16px' }}><TypeBadge type={prop.type} /></td>
                   <td style={{ padding: '12px 16px' }}>
-                    <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.stopPropagation()}>
-                      <button onClick={() => setPreviewProp(prop)} title="Preview Property" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Eye size={14} color="#64748B" /></button>
-                      <button onClick={() => onViewProperty(prop.id)} title="Edit Property" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Pencil size={14} color="#64748B" /></button>
+                    <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                      <button onClick={() => setPreviewProp(prop)} title={t('common.view')} style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Eye size={14} color="#64748B" /></button>
+                      <button onClick={() => onViewProperty(prop.id)} title={t('common.edit')} style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Pencil size={14} color="#64748B" /></button>
+                      <button onClick={() => {}} title={t('properties.actions.deactivate')} style={{ padding: '4px 10px', height: 30, borderRadius: 6, border: '1px solid #FECACA', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: '#991B1B', whiteSpace: 'nowrap', transition: 'all 0.15s' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = '#FEF2F2'; e.currentTarget.style.borderColor = '#F87171'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#FECACA'; }}>
+                        <Ban size={12} /> {t('properties.actions.deactivate')}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -191,7 +195,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
             {/* Header */}
             <div style={{ padding: '18px 24px', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Building2 size={18} color="var(--info)" />
+                {(() => { const Cfg = TYPE_CONFIG[previewProp.type] || TYPE_CONFIG.Headquarters; const Ic = Cfg.icon; return <Ic size={18} color={Cfg.color} />; })()}
                 <span style={{ fontSize: 15, fontWeight: 700, color: '#0F172A' }}>{previewProp.name}</span>
               </div>
               <button onClick={() => setPreviewProp(null)} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E2E8F0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={14} color="#64748B" /></button>
@@ -199,7 +203,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
             {/* Body */}
             <div style={{ padding: '20px 24px', overflowY: 'auto' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 10, background: '#F1F5F9', color: '#475569' }}>{previewProp.type}</span>
+                <TypeBadge type={previewProp.type} />
                 <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 10, background: 'var(--success-bg)', color: 'var(--success)' }}>{previewProp.status}</span>
               </div>
 
@@ -258,7 +262,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
                 <Pencil size={13} /> {t('common.viewDetails')}
               </button>
               <button onClick={() => setPreviewProp(null)} style={{ padding: '7px 16px', borderRadius: 6, border: 'none', background: '#0F172A', fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
-                Close
+                {t('common.close')}
               </button>
             </div>
           </div>
