@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useWorkOrders } from '../context/WorkOrderContext';
-import { Plus, Search, Eye, Pencil, Trash2, X, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Search, Eye, Pencil, Trash2, X, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Info, CheckCircle, Calendar, User, MapPin } from 'lucide-react';
 
 const ALL_STATUSES = ['Draft', 'Pending SSD Service Manager Endorsement', 'Pending SSD G&C Review', 'Pending SSD AS Endorsement', 'Under PWD Grouping', 'Pending OIC Review', 'Pending PWD Proceed IAS', 'Submitted to IAS for Tendering', 'Approved IAS', 'In Progress', 'Completed'];
 const ALL_CATEGORIES = ['All', 'MEP', 'Building', 'Facilities', 'Security'];
@@ -93,6 +93,7 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
   const [priorityFilter, setPriorityFilter] = useState('All');
   const [sortCol, setSortCol] = useState('id');
   const [sortDir, setSortDir] = useState('asc');
+  const [previewWO, setPreviewWO] = useState(null);
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) =>
@@ -356,8 +357,8 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
             </thead>
             <tbody>
               {filtered.map((wo) => (
-                <tr key={wo.id} style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer' }} onClick={() => onViewWO(wo.id)} onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
-                  <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 600, color: 'var(--info)', textDecoration: 'underline' }}>{wo.id}</td>
+                <tr key={wo.id} style={{ borderBottom: '1px solid var(--border)' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
+                  <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 600, color: '#334155' }}>{wo.id}</td>
                   <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 500, color: 'var(--foreground)' }}>{wo.title}</td>
                   <td style={{ padding: '12px 16px', fontSize: 12, color: '#64748B', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{wo.center}</td>
                   <td style={{ padding: '12px 16px' }}>
@@ -379,7 +380,7 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
                   <td style={{ padding: '12px 16px', fontSize: 13, color: '#64748B' }}>{wo.dueDate}</td>
                   <td style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.stopPropagation()}>
-                      <button onClick={() => onViewWO(wo.id)} title="View Work Order" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Eye size={14} color="#64748B" /></button>
+                      <button onClick={() => setPreviewWO(wo)} title="Preview Work Order" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Eye size={14} color="#64748B" /></button>
                       <button onClick={() => onViewWO(wo.id)} title="Edit Work Order" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Pencil size={14} color="#64748B" /></button>
                       <button onClick={() => { if (window.confirm(`Delete work order ${wo.id}? This action cannot be undone.`)) { deleteWorkOrder(wo.id); } }} title="Delete Work Order" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={14} color="#DC2626" /></button>
                     </div>
@@ -400,6 +401,68 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
             )}
           </div>
         )}
+      </div>
+
+      {/* Preview Modal */}
+      {previewWO && (
+        <div onClick={() => setPreviewWO(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: '#fff', borderRadius: 14, width: '100%', maxWidth: 520, boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden' }}>
+            {/* Header */}
+            <div style={{ padding: '18px 24px', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{previewWO.id}</span>
+                {(() => {
+                  const s = STATUS_STYLES[previewWO.status] || STATUS_STYLES['Draft'];
+                  return <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 10, background: s.bg, color: s.color }}>{previewWO.status}</span>;
+                })()}
+              </div>
+              <button onClick={() => setPreviewWO(null)} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E2E8F0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <X size={14} color="#64748B" />
+              </button>
+            </div>
+            {/* Body */}
+            <div style={{ padding: '20px 24px' }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 16 }}>{previewWO.title}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 24px' }}>
+                <FieldRow icon={<MapPin size={13} />} label="Center" value={previewWO.center} />
+                <FieldRow icon={<Info size={13} />} label="Category" value={previewWO.category} />
+                <FieldRow icon={<Info size={13} />} label="Priority" value={
+                  <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 8, background: previewWO.priority === 'Critical' ? '#FEE2E2' : previewWO.priority === 'High' ? '#FEF3C7' : previewWO.priority === 'Medium' ? '#DBEAFE' : '#F1F5F9', color: previewWO.priority === 'Critical' ? '#DC2626' : previewWO.priority === 'High' ? '#B45309' : previewWO.priority === 'Medium' ? '#2563EB' : '#64748B' }}>{previewWO.priority}</span>
+                } />
+                <FieldRow icon={<CheckCircle size={13} />} label="PWD Involved" value={previewWO.pwdInvolvement === 'with' ? 'Yes' : 'No'} />
+                <FieldRow icon={<User size={13} />} label="Assignee" value={previewWO.assignee} />
+                <FieldRow icon={<Calendar size={13} />} label="Due Date" value={previewWO.dueDate} />
+              </div>
+              {previewWO.description && (
+                <div style={{ marginTop: 18, paddingTop: 16, borderTop: '1px solid #F1F5F9' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Description</div>
+                  <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.6 }}>{previewWO.description}</div>
+                </div>
+              )}
+            </div>
+            {/* Footer */}
+            <div style={{ padding: '14px 24px', borderTop: '1px solid #E2E8F0', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button onClick={() => { setPreviewWO(null); onViewWO(previewWO.id); }} style={{ padding: '7px 16px', borderRadius: 6, border: '1px solid #E2E8F0', background: '#fff', fontSize: 12, fontWeight: 600, color: '#334155', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Pencil size={13} /> Edit
+              </button>
+              <button onClick={() => setPreviewWO(null)} style={{ padding: '7px 16px', borderRadius: 6, border: 'none', background: '#0F172A', fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FieldRow({ icon, label, value }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+      <span style={{ marginTop: 2, color: '#94A3B8' }}>{icon}</span>
+      <div>
+        <div style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+        <div style={{ fontSize: 13, fontWeight: 500, color: '#334155', marginTop: 2 }}>{value}</div>
       </div>
     </div>
   );
