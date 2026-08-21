@@ -4,7 +4,7 @@ import { Search, ShieldCheck, AlertTriangle, CheckCircle, Clock, Upload, X, Chev
 
 const STATUS_OPTIONS = ['All', 'Valid', 'Expiring', 'Expired'];
 
-export default function ComplianceVault() {
+export default function ComplianceVault({ selectedCenter }) {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -12,19 +12,14 @@ export default function ComplianceVault() {
   const [sortCol, setSortCol] = useState('nextInspection');
   const [sortDir, setSortDir] = useState('asc');
 
-  const totalDocs = COMPLIANCE_DOCS.length;
-  const validCount = COMPLIANCE_DOCS.filter((d) => d.status === 'Valid').length;
-  const expiringCount = COMPLIANCE_DOCS.filter((d) => d.status === 'Expiring').length;
-  const expiredCount = COMPLIANCE_DOCS.filter((d) => d.status === 'Expired').length;
-  const complianceRate = totalDocs > 0 ? Math.round((validCount / totalDocs) * 100) : 0;
-
-  const centerOptions = useMemo(() => ['All', ...PROPERTIES.map((p) => p.name)], []);
+  const isGlobalCentre = selectedCenter && selectedCenter !== 'All';
+  const effectiveCenter = isGlobalCentre ? selectedCenter : centerFilter;
 
   const filtered = useMemo(() => {
     let list = COMPLIANCE_DOCS.filter((d) => {
       if (categoryFilter !== 'All' && d.category !== categoryFilter) return false;
       if (statusFilter !== 'All' && d.status !== statusFilter) return false;
-      if (centerFilter !== 'All' && d.center !== centerFilter) return false;
+      if (effectiveCenter !== 'All' && d.center !== effectiveCenter) return false;
       if (search) {
         const q = search.toLowerCase();
         return d.name.toLowerCase().includes(q) || d.center.toLowerCase().includes(q) || d.documentRef.toLowerCase().includes(q) || d.issuedBy.toLowerCase().includes(q);
@@ -38,7 +33,24 @@ export default function ComplianceVault() {
       return sortDir === 'asc' ? cmp : -cmp;
     });
     return list;
-  }, [search, categoryFilter, statusFilter, centerFilter, sortCol, sortDir]);
+  }, [search, categoryFilter, statusFilter, effectiveCenter, sortCol, sortDir]);
+
+  const totalDocs = filtered.length;
+  const validCount = filtered.filter((d) => d.status === 'Valid').length;
+  const expiringCount = filtered.filter((d) => d.status === 'Expiring').length;
+  const expiredCount = filtered.filter((d) => d.status === 'Expired').length;
+  const complianceRate = totalDocs > 0 ? Math.round((validCount / totalDocs) * 100) : 0;
+
+  const categoryCoverage = useMemo(() => {
+    return COMPLIANCE_CATEGORIES.map((cat) => {
+      const catDocs = filtered.filter((d) => d.category === cat);
+      const catValid = catDocs.filter((d) => d.status === 'Valid').length;
+      const pct = catDocs.length > 0 ? Math.round((catValid / catDocs.length) * 100) : 0;
+      return { cat, total: catDocs.length, valid: catValid, pct };
+    }).filter((c) => c.total > 0);
+  }, [filtered]);
+
+  const centerOptions = useMemo(() => ['All', ...PROPERTIES.map((p) => p.name)], []);
 
   const handleSort = (col) => {
     if (sortCol === col) setSortDir((d) => d === 'asc' ? 'desc' : 'asc');
@@ -54,14 +66,14 @@ export default function ComplianceVault() {
   const activeFilters = [];
   if (categoryFilter !== 'All') activeFilters.push({ key: 'cat', label: `Category: ${categoryFilter}`, clear: () => setCategoryFilter('All') });
   if (statusFilter !== 'All') activeFilters.push({ key: 'status', label: `Status: ${statusFilter}`, clear: () => setStatusFilter('All') });
-  if (centerFilter !== 'All') activeFilters.push({ key: 'center', label: centerFilter, clear: () => setCenterFilter('All') });
+  if (!isGlobalCentre && centerFilter !== 'All') activeFilters.push({ key: 'center', label: centerFilter, clear: () => setCenterFilter('All') });
 
   return (
     <div style={{ padding: 24, maxWidth: 1400 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>Compliance Vault</h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{totalDocs} documents across {PROPERTIES.length} properties</p>
+          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{totalDocs} documents {isGlobalCentre ? `at ${selectedCenter}` : `across ${PROPERTIES.length} properties`}</p>
         </div>
         <button style={{ padding: '10px 20px', fontSize: 13, fontWeight: 600, borderRadius: 8, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
           <Upload size={16} /> Upload Document
@@ -80,23 +92,18 @@ export default function ComplianceVault() {
       <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', boxShadow: 'var(--card-shadow)', padding: 20, marginBottom: 20 }}>
         <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)', marginBottom: 14 }}>Coverage by Category</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
-          {COMPLIANCE_CATEGORIES.map((cat) => {
-            const catDocs = COMPLIANCE_DOCS.filter((d) => d.category === cat);
-            const catValid = catDocs.filter((d) => d.status === 'Valid').length;
-            const pct = catDocs.length > 0 ? Math.round((catValid / catDocs.length) * 100) : 0;
-            return (
-              <div key={cat} style={{ padding: 12, borderRadius: 8, border: '1px solid #E2E8F0' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#475569' }}>{cat}</span>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: pct === 100 ? 'var(--success)' : '#B45309' }}>{pct}%</span>
-                </div>
-                <div style={{ height: 6, borderRadius: 3, background: '#E2E8F0', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${pct}%`, borderRadius: 3, background: pct === 100 ? 'var(--success)' : '#F59E0B', transition: 'width 0.3s' }} />
-                </div>
-                <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>{catValid}/{catDocs.length} valid</div>
+          {categoryCoverage.map(({ cat, total, valid, pct }) => (
+            <div key={cat} style={{ padding: 12, borderRadius: 8, border: '1px solid #E2E8F0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: '#475569' }}>{cat}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: pct === 100 ? 'var(--success)' : '#B45309' }}>{pct}%</span>
               </div>
-            );
-          })}
+              <div style={{ height: 6, borderRadius: 3, background: '#E2E8F0', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${pct}%`, borderRadius: 3, background: pct === 100 ? 'var(--success)' : '#F59E0B', transition: 'width 0.3s' }} />
+              </div>
+              <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>{valid}/{total} valid</div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -108,7 +115,9 @@ export default function ComplianceVault() {
         </div>
         <FilterDropdown label="Category" options={['All', ...COMPLIANCE_CATEGORIES]} selected={categoryFilter} onSelect={setCategoryFilter} />
         <FilterDropdown label="Status" options={STATUS_OPTIONS} selected={statusFilter} onSelect={setStatusFilter} />
-        <FilterDropdown label="Property" options={centerOptions} selected={centerFilter} onSelect={setCenterFilter} />
+        {!isGlobalCentre && (
+          <FilterDropdown label="Property" options={centerOptions} selected={centerFilter} onSelect={setCenterFilter} />
+        )}
       </div>
 
       {/* Active Filter Chips */}
@@ -120,7 +129,7 @@ export default function ComplianceVault() {
               <button onClick={f.clear} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'var(--primary)' }}><X size={12} /></button>
             </span>
           ))}
-          <button onClick={() => { setCategoryFilter('All'); setStatusFilter('All'); setCenterFilter('All'); }} style={{ fontSize: 12, color: '#64748B', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}>Clear all</button>
+          <button onClick={() => { setCategoryFilter('All'); setStatusFilter('All'); if (!isGlobalCentre) setCenterFilter('All'); }} style={{ fontSize: 12, color: '#64748B', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}>Clear all</button>
         </div>
       )}
 
@@ -133,7 +142,7 @@ export default function ComplianceVault() {
                 {[
                   { key: 'name', label: 'Document', width: undefined },
                   { key: 'category', label: 'Category', width: 130 },
-                  { key: 'center', label: 'Property', width: 200 },
+                  ...(!isGlobalCentre ? [{ key: 'center', label: 'Property', width: 200 }] : []),
                   { key: 'documentRef', label: 'Ref', width: 120 },
                   { key: 'inspectionDate', label: 'Inspected', width: 110 },
                   { key: 'nextInspection', label: 'Next Due', width: 110 },
@@ -154,7 +163,9 @@ export default function ComplianceVault() {
                 <tr key={doc.id} style={{ borderBottom: '1px solid var(--border)' }} onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')} onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
                   <td style={{ padding: '10px 16px', fontSize: 13, fontWeight: 600, color: 'var(--foreground)' }}>{doc.name}</td>
                   <td style={{ padding: '10px 16px' }}><span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 10, background: '#F1F5F9', color: '#475569' }}>{doc.category}</span></td>
-                  <td style={{ padding: '10px 16px', fontSize: 12, color: '#64748B', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.center}</td>
+                  {!isGlobalCentre && (
+                    <td style={{ padding: '10px 16px', fontSize: 12, color: '#64748B', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.center}</td>
+                  )}
                   <td style={{ padding: '10px 16px', fontSize: 12, color: '#94A3B8', fontFamily: 'monospace' }}>{doc.documentRef}</td>
                   <td style={{ padding: '10px 16px', fontSize: 12, color: '#64748B' }}>{doc.inspectionDate}</td>
                   <td style={{ padding: '10px 16px', fontSize: 12, color: '#64748B' }}>{doc.nextInspection}</td>
@@ -165,7 +176,7 @@ export default function ComplianceVault() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={8} style={{ padding: 48, textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
+                <tr><td colSpan={isGlobalCentre ? 7 : 8} style={{ padding: 48, textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
                   <div style={{ fontSize: 16, marginBottom: 8, color: '#CBD5E1' }}>No documents found</div>
                   <div>Try adjusting your search or filters</div>
                 </td></tr>

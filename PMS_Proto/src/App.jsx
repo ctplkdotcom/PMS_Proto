@@ -32,9 +32,18 @@ function AppLayout() {
   const [subView, setSubView] = useState(null);
   const [viewWOId, setViewWOId] = useState(null);
   const [viewPropertyId, setViewPropertyId] = useState(null);
+  const [selectedCenter, setSelectedCenter] = useState('All');
 
   const handleNavigate = (tab) => {
     setActiveTab(tab);
+    setSubView(null);
+    setViewWOId(null);
+    setViewPropertyId(null);
+  };
+
+  const handleCenterChange = (center) => {
+    setSelectedCenter(center);
+    setActiveTab('Dashboard');
     setSubView(null);
     setViewWOId(null);
     setViewPropertyId(null);
@@ -61,12 +70,13 @@ function AppLayout() {
         onNavigate={handleNavigate}
       />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <Header />
+        <Header selectedCenter={selectedCenter} onCenterChange={handleCenterChange} />
         <main style={{ flex: 1, overflowY: 'auto', background: 'var(--secondary)' }}>
           {subView === 'workOrderCreate' ? (
             <WorkOrderCreate
               onBack={() => setSubView(null)}
               onViewWO={handleViewWO}
+              selectedCenter={selectedCenter}
             />
           ) : subView === 'workOrderDetail' ? (
             <WorkOrderDetail
@@ -83,6 +93,7 @@ function AppLayout() {
               onCreateWorkOrder={() => setSubView('workOrderCreate')}
               onViewWO={handleViewWO}
               onViewProperty={handleViewProperty}
+              selectedCenter={selectedCenter}
             />
           )}
         </main>

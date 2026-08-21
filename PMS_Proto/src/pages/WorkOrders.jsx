@@ -84,7 +84,7 @@ function FilterDropdown({ label, options, selected, onSelect, counts }) {
   );
 }
 
-export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
+export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter }) {
   const { permissions } = useAuth();
   const { workOrders, deleteWorkOrder } = useWorkOrders();
   const [search, setSearch] = useState('');
@@ -94,6 +94,10 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
   const [sortCol, setSortCol] = useState('id');
   const [sortDir, setSortDir] = useState('asc');
   const [previewWO, setPreviewWO] = useState(null);
+
+  const baseWorkOrders = selectedCenter && selectedCenter !== 'All'
+    ? workOrders.filter((w) => w.center === selectedCenter)
+    : workOrders;
 
   const toggleStatus = (status) => {
     setSelectedStatuses((prev) =>
@@ -117,24 +121,24 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
 
   const statusCounts = useMemo(() => {
     const counts = {};
-    ALL_STATUSES.forEach((s) => { counts[s] = workOrders.filter((w) => w.status === s).length; });
+    ALL_STATUSES.forEach((s) => { counts[s] = baseWorkOrders.filter((w) => w.status === s).length; });
     return counts;
-  }, [workOrders]);
+  }, [baseWorkOrders]);
 
   const categoryCounts = useMemo(() => {
-    const counts = { All: workOrders.length };
-    ALL_CATEGORIES.slice(1).forEach((c) => { counts[c] = workOrders.filter((w) => w.category === c).length; });
+    const counts = { All: baseWorkOrders.length };
+    ALL_CATEGORIES.slice(1).forEach((c) => { counts[c] = baseWorkOrders.filter((w) => w.category === c).length; });
     return counts;
-  }, [workOrders]);
+  }, [baseWorkOrders]);
 
   const priorityCounts = useMemo(() => {
-    const counts = { All: workOrders.length };
-    ALL_PRIORITIES.slice(1).forEach((p) => { counts[p] = workOrders.filter((w) => w.priority === p).length; });
+    const counts = { All: baseWorkOrders.length };
+    ALL_PRIORITIES.slice(1).forEach((p) => { counts[p] = baseWorkOrders.filter((w) => w.priority === p).length; });
     return counts;
-  }, [workOrders]);
+  }, [baseWorkOrders]);
 
   const filtered = useMemo(() => {
-    let result = workOrders.filter((wo) => {
+    let result = baseWorkOrders.filter((wo) => {
       if (selectedStatuses.length > 0 && !selectedStatuses.includes(wo.status)) return false;
       if (categoryFilter !== 'All' && wo.category !== categoryFilter) return false;
       if (priorityFilter !== 'All' && wo.priority !== priorityFilter) return false;
@@ -157,7 +161,7 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
     });
 
     return result;
-  }, [workOrders, search, selectedStatuses, categoryFilter, priorityFilter, sortCol, sortDir]);
+  }, [baseWorkOrders, search, selectedStatuses, categoryFilter, priorityFilter, sortCol, sortDir]);
 
   const activeFilters = [];
   selectedStatuses.forEach((s) => activeFilters.push({ key: `status-${s}`, label: s, clear: () => toggleStatus(s) }));

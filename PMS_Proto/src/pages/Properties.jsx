@@ -34,7 +34,7 @@ function FilterDropdown({ label, options, selected, onSelect, counts }) {
   );
 }
 
-export default function Properties({ onViewProperty }) {
+export default function Properties({ onViewProperty, selectedCenter }) {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
   const [districtFilter, setDistrictFilter] = useState('All');
@@ -42,20 +42,24 @@ export default function Properties({ onViewProperty }) {
   const [sortDir, setSortDir] = useState('asc');
   const [previewProp, setPreviewProp] = useState(null);
 
+  const baseProperties = selectedCenter && selectedCenter !== 'All'
+    ? PROPERTIES.filter((p) => p.name === selectedCenter)
+    : PROPERTIES;
+
   const typeCounts = useMemo(() => {
-    const c = { All: PROPERTIES.length };
-    PROPERTIES.forEach((p) => { c[p.type] = (c[p.type] || 0) + 1; });
+    const c = { All: baseProperties.length };
+    baseProperties.forEach((p) => { c[p.type] = (c[p.type] || 0) + 1; });
     return c;
-  }, []);
+  }, [baseProperties]);
 
   const districtCounts = useMemo(() => {
-    const c = { All: PROPERTIES.length };
-    PROPERTIES.forEach((p) => { c[p.district] = (c[p.district] || 0) + 1; });
+    const c = { All: baseProperties.length };
+    baseProperties.forEach((p) => { c[p.district] = (c[p.district] || 0) + 1; });
     return c;
-  }, []);
+  }, [baseProperties]);
 
   const filtered = useMemo(() => {
-    let list = PROPERTIES.filter((p) => {
+    let list = baseProperties.filter((p) => {
       if (typeFilter !== 'All' && p.type !== typeFilter) return false;
       if (districtFilter !== 'All' && p.district !== districtFilter) return false;
       if (search) {
@@ -71,7 +75,7 @@ export default function Properties({ onViewProperty }) {
       return sortDir === 'asc' ? cmp : -cmp;
     });
     return list;
-  }, [search, typeFilter, districtFilter, sortCol, sortDir]);
+  }, [baseProperties, search, typeFilter, districtFilter, sortCol, sortDir]);
 
   const handleSort = (col) => {
     if (sortCol === col) setSortDir((d) => d === 'asc' ? 'desc' : 'asc');
@@ -89,7 +93,7 @@ export default function Properties({ onViewProperty }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>Properties</h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{PROPERTIES.length} properties managed</p>
+          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{baseProperties.length} properties managed</p>
         </div>
         <button style={{ padding: '10px 20px', fontSize: 13, fontWeight: 600, borderRadius: 8, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
           <Plus size={16} /> Add Property

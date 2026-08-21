@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ROLES, CENTERS, NOTIFICATIONS } from '../data/constants';
-import { Building2, ChevronDown, Bell, X } from 'lucide-react';
+import { CENTERS, NOTIFICATIONS } from '../data/constants';
+import { Building2, ChevronDown, Bell } from 'lucide-react';
 
-export default function Header() {
+const ALL_CENTERS_OPTION = 'All';
+
+export default function Header({ selectedCenter, onCenterChange }) {
   const { permissions } = useAuth();
-  const [selectedCenter, setSelectedCenter] = useState(CENTERS[0]);
   const [centerDropdownOpen, setCenterDropdownOpen] = useState(false);
   const [lang, setLang] = useState('en');
   const [notifOpen, setNotifOpen] = useState(false);
+
+  const displayLabel = selectedCenter === ALL_CENTERS_OPTION ? 'All Centres' : selectedCenter;
 
   return (
     <header
@@ -36,7 +39,7 @@ export default function Header() {
           }}
         >
           <Building2 size={14} color={permissions?.centerScope === 'ASSIGNED_ONLY' ? '#64748B' : 'var(--info)'} />
-          <span style={{ fontSize: 13, fontWeight: 600 }}>{selectedCenter}</span>
+          <span style={{ fontSize: 13, fontWeight: 600 }}>{displayLabel}</span>
           {permissions?.centerScope !== 'ASSIGNED_ONLY' && <ChevronDown size={13} color="#64748B" />}
           {permissions?.centerScope === 'ASSIGNED_ONLY' && (
             <span style={{ marginLeft: 6, fontSize: 10, padding: '2px 6px', backgroundColor: '#E2E8F0', color: '#475569', borderRadius: 4, fontWeight: 700 }}>LOCKED</span>
@@ -47,10 +50,25 @@ export default function Header() {
             <div style={{ padding: '6px 12px 4px', fontSize: 11, color: '#64748B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               {permissions?.centerScope === 'CLUSTER' ? 'Cluster Centers' : 'All Global Centers'}
             </div>
+            <button
+              onClick={() => { onCenterChange(ALL_CENTERS_OPTION); setCenterDropdownOpen(false); }}
+              style={{
+                width: '100%', textAlign: 'left', padding: '8px 12px',
+                background: selectedCenter === ALL_CENTERS_OPTION ? 'var(--secondary)' : 'transparent',
+                border: 'none', cursor: 'pointer', fontSize: 13,
+                color: selectedCenter === ALL_CENTERS_OPTION ? 'var(--info)' : 'var(--foreground)',
+                fontWeight: selectedCenter === ALL_CENTERS_OPTION ? 600 : 400,
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}
+            >
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: selectedCenter === ALL_CENTERS_OPTION ? 'var(--info)' : 'transparent', display: 'inline-block' }} />
+              All Centres
+            </button>
+            <div style={{ height: 1, background: 'var(--border)', margin: '2px 12px' }} />
             {CENTERS.map((center) => (
               <button
                 key={center}
-                onClick={() => { setSelectedCenter(center); setCenterDropdownOpen(false); }}
+                onClick={() => { onCenterChange(center); setCenterDropdownOpen(false); }}
                 style={{
                   width: '100%', textAlign: 'left', padding: '8px 12px',
                   background: center === selectedCenter ? 'var(--secondary)' : 'transparent',

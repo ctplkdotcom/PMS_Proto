@@ -27,29 +27,38 @@ function KPICard({ title, value, subtitle, icon: Icon, iconBg, change, trend }) 
   );
 }
 
-export default function Dashboard() {
+export default function Dashboard({ selectedCenter }) {
   const { workOrders } = useWorkOrders();
 
-  const recentWOs = workOrders.slice(0, 5);
-  const expiringDocs = COMPLIANCE_DOCS.filter((d) => d.status === 'Expiring');
-  const expiredDocs = COMPLIANCE_DOCS.filter((d) => d.status === 'Expired');
-  const totalDocs = COMPLIANCE_DOCS.length;
-  const validDocs = COMPLIANCE_DOCS.filter((d) => d.status === 'Valid').length;
+  const filteredWOs = selectedCenter && selectedCenter !== 'All'
+    ? workOrders.filter((w) => w.center === selectedCenter)
+    : workOrders;
+  const filteredDocs = selectedCenter && selectedCenter !== 'All'
+    ? COMPLIANCE_DOCS.filter((d) => d.center === selectedCenter)
+    : COMPLIANCE_DOCS;
+
+  const recentWOs = filteredWOs.slice(0, 5);
+  const expiringDocs = filteredDocs.filter((d) => d.status === 'Expiring');
+  const expiredDocs = filteredDocs.filter((d) => d.status === 'Expired');
+  const totalDocs = filteredDocs.length;
+  const validDocs = filteredDocs.filter((d) => d.status === 'Valid').length;
   const complianceRate = totalDocs > 0 ? Math.round((validDocs / totalDocs) * 100) : 0;
 
   const categoryStats = COMPLIANCE_CATEGORIES.map((cat) => {
-    const catDocs = COMPLIANCE_DOCS.filter((d) => d.category === cat);
+    const catDocs = filteredDocs.filter((d) => d.category === cat);
     const catValid = catDocs.filter((d) => d.status === 'Valid').length;
     return { category: cat, total: catDocs.length, valid: catValid, pct: catDocs.length > 0 ? Math.round((catValid / catDocs.length) * 100) : 0 };
   });
+
+  const centreLabel = selectedCenter && selectedCenter !== 'All' ? selectedCenter : 'all centres';
 
   return (
     <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1400 }}>
       {/* KPIs */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        <KPICard title="Occupancy Rate" value="94.2%" icon={Building2} iconBg="var(--info-bg)" change={1.3} trend="up" subtitle="Across all centers" />
+        <KPICard title="Occupancy Rate" value="94.2%" icon={Building2} iconBg="var(--info-bg)" change={1.3} trend="up" subtitle={`Across ${centreLabel}`} />
         <KPICard title="Monthly Revenue" value="$2.85M" icon={DollarSign} iconBg="var(--success-bg)" change={5.8} trend="up" subtitle="Aug 2026" />
-        <KPICard title="Open Work Orders" value={workOrders.filter((w) => w.status !== 'Completed').length} icon={ClipboardList} iconBg="var(--warning-bg)" subtitle={`${workOrders.filter((w) => w.status === 'Completed').length} completed`} />
+        <KPICard title="Open Work Orders" value={filteredWOs.filter((w) => w.status !== 'Completed').length} icon={ClipboardList} iconBg="var(--warning-bg)" subtitle={`${filteredWOs.filter((w) => w.status === 'Completed').length} completed`} />
         <KPICard title="Compliance Score" value={`${complianceRate}%`} icon={ShieldCheck} iconBg={expiringDocs.length + expiredDocs.length > 0 ? 'var(--critical-bg)' : 'var(--success-bg)'} change={expiringDocs.length + expiredDocs.length > 0 ? -(expiringDocs.length + expiredDocs.length) : 0} trend={expiringDocs.length + expiredDocs.length > 0 ? 'down' : 'stable'} subtitle={`${expiringDocs.length} expiring, ${expiredDocs.length} expired`} />
       </div>
 
