@@ -237,18 +237,15 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
                   )}
                   {/* Count badge */}
                   <div title={`${count} work order${count !== 1 ? 's' : ''} — ${status}`} style={{
-                    fontSize: 11, fontWeight: 700, color: isSelected ? sStyle.activeBg : '#94A3B8',
-                    marginBottom: 6, minWidth: 20, textAlign: 'center',
-                    lineHeight: 1.2,
+                    fontSize: 11, fontWeight: count > 0 ? 700 : 500,
+                    color: count > 0 ? (isSelected ? sStyle.activeBg : '#475569') : '#CBD5E1',
+                    marginBottom: 8, minWidth: 20, textAlign: 'center',
+                    padding: '2px 7px', borderRadius: 8,
+                    background: count > 0 ? (isSelected ? `${sStyle.activeBg}15` : '#F1F5F9') : '#F8FAFC',
+                    border: `1px solid ${count > 0 ? (isSelected ? `${sStyle.activeBg}30` : '#E2E8F0') : '#F1F5F9'}`,
+                    lineHeight: 1.3,
                   }}>
-                    {count > 0 ? (
-                      <>
-                        <div>{count}</div>
-                        <div style={{ fontSize: 8, fontWeight: 500, color: isSelected ? sStyle.activeBg : '#CBD5E1', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                          {count === 1 ? 'order' : 'orders'}
-                        </div>
-                      </>
-                    ) : ''}
+                    {count}
                   </div>
                   {/* Node circle */}
                   <button
