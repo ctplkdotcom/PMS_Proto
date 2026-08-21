@@ -9,6 +9,7 @@ const WorkOrderContext = createContext({
   workOrders: [],
   addWorkOrder: () => {},
   updateWorkOrderStatus: () => {},
+  deleteWorkOrder: () => {},
   getNextWoId: () => '',
 });
 
@@ -32,8 +33,12 @@ export function WorkOrderProvider({ children }) {
     );
   };
 
+  const deleteWorkOrder = (woId) => {
+    setWorkOrders((prev) => prev.filter((wo) => wo.id !== woId));
+  };
+
   return (
-    <WorkOrderContext.Provider value={{ workOrders, addWorkOrder, updateWorkOrderStatus, getNextWoId }}>
+    <WorkOrderContext.Provider value={{ workOrders, addWorkOrder, updateWorkOrderStatus, deleteWorkOrder, getNextWoId }}>
       {children}
     </WorkOrderContext.Provider>
   );

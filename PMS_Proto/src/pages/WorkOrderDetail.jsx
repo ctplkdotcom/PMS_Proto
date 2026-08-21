@@ -178,9 +178,16 @@ export default function WorkOrderDetail({ woId, onBack }) {
   const [iasHovered, setIasHovered] = useState(false);
 
   const isSM = role === 'SERVICE_MANAGER' && wo?.status === 'Pending SSD Service Manager Endorsement';
+  const isAS = role === 'SSD_AS' && wo?.status === 'Pending SSD AS Endorsement';
+  const isGC = role === 'SSD_GC' && wo?.status === 'Pending SSD G&C Review';
+  const isOIC = role === 'OIC' && wo?.status === 'Pending OIC Review';
+  const isOICDraft = wo?.status === 'Draft' && role === 'OIC';
+  const isPWDGrouping = role === 'PWD' && wo?.status === 'Under PWD Grouping';
   const isPendingIAS = wo?.status === 'Pending PWD Proceed IAS';
   const isSubmittedIAS = wo?.status === 'Submitted to IAS for Tendering';
   const isApprovedIAS = wo?.status === 'Approved IAS';
+  const isInProgress = wo?.status === 'In Progress';
+  const isCompleted = wo?.status === 'Completed';
 
   // ── Checklist item states ──
   const [itemStates, setItemStates] = useState({
@@ -253,7 +260,7 @@ export default function WorkOrderDetail({ woId, onBack }) {
   }
 
   const today = 'Tuesday, 18 August 2026';
-  const portfolio = '\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3';
+  const portfolio = 'PLK Shek Kip Mei Community Services Centre';
   const pStyle = PRIORITY_STYLES[wo.priority] || PRIORITY_STYLES['Medium'];
   const sStyle = statusStyle(wo.status);
 
@@ -324,13 +331,81 @@ export default function WorkOrderDetail({ woId, onBack }) {
                 onClick={() => { updateWorkOrderStatus(wo.id, 'Draft'); onBack(); }}
                 style={{ ...BTN_SECONDARY, border: '1px solid #DC2626', background: '#FEF2F2', color: '#DC2626' }}
               >
-                <RotateCcw size={14} /> Return
+                <RotateCcw size={14} /> Return to Draft
               </button>
               <button
                 onClick={() => { updateWorkOrderStatus(wo.id, 'Pending SSD AS Endorsement'); onBack(); }}
                 style={{ ...BTN_PRIMARY, background: '#059669' }}
               >
                 <Send size={14} /> Submit to AS for Endorsement
+              </button>
+            </div>
+          )}
+          {isAS && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Draft'); onBack(); }}
+                style={{ ...BTN_SECONDARY, border: '1px solid #DC2626', background: '#FEF2F2', color: '#DC2626' }}
+              >
+                <RotateCcw size={14} /> Return to Draft
+              </button>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Pending SSD G&C Review'); onBack(); }}
+                style={{ ...BTN_PRIMARY, background: '#059669' }}
+              >
+                <Send size={14} /> Submit to G&C for Review
+              </button>
+            </div>
+          )}
+          {isGC && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Draft'); onBack(); }}
+                style={{ ...BTN_SECONDARY, border: '1px solid #DC2626', background: '#FEF2F2', color: '#DC2626' }}
+              >
+                <RotateCcw size={14} /> Return to Draft
+              </button>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Pending OIC Review'); onBack(); }}
+                style={{ ...BTN_PRIMARY, background: '#059669' }}
+              >
+                <Send size={14} /> Submit to OIC for Review
+              </button>
+            </div>
+          )}
+          {isOIC && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Draft'); onBack(); }}
+                style={{ ...BTN_SECONDARY, border: '1px solid #DC2626', background: '#FEF2F2', color: '#DC2626' }}
+              >
+                <RotateCcw size={14} /> Return to Draft
+              </button>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Under PWD Grouping'); onBack(); }}
+                style={{ ...BTN_PRIMARY, background: '#059669' }}
+              >
+                <Send size={14} /> Submit to PWD
+              </button>
+            </div>
+          )}
+          {isOICDraft && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Pending SSD Service Manager Endorsement'); onBack(); }}
+                style={{ ...BTN_PRIMARY, background: '#059669' }}
+              >
+                <Send size={14} /> Submit to Service Manager
+              </button>
+            </div>
+          )}
+          {isPWDGrouping && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Pending PWD Proceed IAS'); onBack(); }}
+                style={{ ...BTN_PRIMARY, background: '#7C3AED', boxShadow: '0 2px 8px rgba(124,58,237,0.3)' }}
+              >
+                <Send size={14} /> Submit to IAS
               </button>
             </div>
           )}
@@ -375,6 +450,31 @@ export default function WorkOrderDetail({ woId, onBack }) {
               >
                 <Check size={14} /> Manual Approval
               </button>
+            </div>
+          )}
+          {isApprovedIAS && (role === 'PWD' || role === 'SSD_GC') && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'In Progress'); onBack(); }}
+                style={{ ...BTN_PRIMARY, background: '#2563EB' }}
+              >
+                <Send size={14} /> Start Work
+              </button>
+            </div>
+          )}
+          {isInProgress && (role === 'PWD' || role === 'SSD_GC') && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => { updateWorkOrderStatus(wo.id, 'Completed'); onBack(); }}
+                style={{ ...BTN_PRIMARY, background: '#16A34A' }}
+              >
+                <CheckCircle size={14} /> Mark Complete
+              </button>
+            </div>
+          )}
+          {isCompleted && (
+            <div style={{ padding: '6px 14px', borderRadius: 6, background: '#F0FDF4', border: '1px solid rgba(5,150,105,0.2)', fontSize: 12, fontWeight: 600, color: '#059669', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <CheckCircle size={14} /> Work Order Completed
             </div>
           )}
         </div>

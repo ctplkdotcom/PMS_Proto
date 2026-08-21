@@ -86,7 +86,7 @@ function FilterDropdown({ label, options, selected, onSelect, counts }) {
 
 export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
   const { permissions } = useAuth();
-  const { workOrders } = useWorkOrders();
+  const { workOrders, deleteWorkOrder } = useWorkOrders();
   const [search, setSearch] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -236,12 +236,19 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
                     }} />
                   )}
                   {/* Count badge */}
-                  <div style={{
-                    fontSize: 10, fontWeight: 700, color: isSelected ? sStyle.activeBg : '#94A3B8',
+                  <div title={`${count} work order${count !== 1 ? 's' : ''} — ${status}`} style={{
+                    fontSize: 11, fontWeight: 700, color: isSelected ? sStyle.activeBg : '#94A3B8',
                     marginBottom: 6, minWidth: 20, textAlign: 'center',
-                    height: 16,
+                    lineHeight: 1.2,
                   }}>
-                    {count > 0 ? count : ''}
+                    {count > 0 ? (
+                      <>
+                        <div>{count}</div>
+                        <div style={{ fontSize: 8, fontWeight: 500, color: isSelected ? sStyle.activeBg : '#CBD5E1', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          {count === 1 ? 'order' : 'orders'}
+                        </div>
+                      </>
+                    ) : ''}
                   </div>
                   {/* Node circle */}
                   <button
@@ -375,9 +382,9 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO }) {
                   <td style={{ padding: '12px 16px', fontSize: 13, color: '#64748B' }}>{wo.dueDate}</td>
                   <td style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.stopPropagation()}>
-                      <button style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Eye size={14} color="#64748B" /></button>
-                      <button style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Pencil size={14} color="#64748B" /></button>
-                      <button style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={14} color="#DC2626" /></button>
+                      <button onClick={() => onViewWO(wo.id)} title="View Work Order" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Eye size={14} color="#64748B" /></button>
+                      <button onClick={() => onViewWO(wo.id)} title="Edit Work Order" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Pencil size={14} color="#64748B" /></button>
+                      <button onClick={() => { if (window.confirm(`Delete work order ${wo.id}? This action cannot be undone.`)) { deleteWorkOrder(wo.id); } }} title="Delete Work Order" style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trash2 size={14} color="#DC2626" /></button>
                     </div>
                   </td>
                 </tr>

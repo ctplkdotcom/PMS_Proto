@@ -36,7 +36,7 @@ export default function FloorPlan() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>Floor Plan</h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>Interactive asset map &middot; Kowloon East District Hub</p>
+          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>Interactive asset map &middot; PLK Lee Chiu Kong Memorial Centre</p>
         </div>
         {permissions?.canAddMapAssets && (
           <button style={{ padding: '10px 20px', fontSize: 13, fontWeight: 600, borderRadius: 8, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>

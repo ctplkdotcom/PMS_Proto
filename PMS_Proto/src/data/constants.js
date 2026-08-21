@@ -68,10 +68,18 @@ export const ROLES = {
 };
 
 export const CENTERS = [
-  "\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3",
-  "Kowloon East District Hub",
-  "New Territories North Office",
-  "Island South Facility",
+  "PLK Main Building (Causeway Bay)",
+  "PLK Shek Kip Mei Community Services Centre",
+  "PLK Making Life Beautiful Integrated Health Centre",
+  "PLK Cheerful Court Integrated Health Centre",
+  "PLK Tin Shui Wai Rehabilitation Centre",
+  "PLK Lee Chiu Kong Memorial Centre",
+  "PLK Y.C. Cheng Centre",
+  "PLK Sai Ying Pun Home for the Elderly",
+  "PLK Wan Chai Home for the Elderly",
+  "PLK Kwok Law Kwai Chun Home for the Elderly",
+  "PLK Angela Leong On Kei Kindergarten-cum-Nursery",
+  "PLK Child Development Centre (Causeway Bay)",
 ];
 
 export const WORK_ORDERS = [
@@ -79,7 +87,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0901",
     title: "Fire Exit Door Hinge Replacement",
-    center: "\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3",
+    center: "PLK Shek Kip Mei Community Services Centre",
     priority: "Critical",
     status: "Draft",
     assignee: "Lee Wai Ling",
@@ -100,7 +108,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0902",
     title: "Roof Waterproofing — East Wing Leakage",
-    center: "Kowloon East District Hub",
+    center: "PLK Lee Chiu Kong Memorial Centre",
     priority: "Medium",
     status: "Draft",
     assignee: "Lee Wai Ling",
@@ -121,7 +129,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0903",
     title: "Playground Rubber Matting Replacement",
-    center: "New Territories North Office",
+    center: "PLK Tin Shui Wai Rehabilitation Centre",
     priority: "Medium",
     status: "Draft",
     assignee: "Chan Siu Ming",
@@ -142,7 +150,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0898",
     title: "Elevator Emergency Phone Battery Replacement",
-    center: "Kowloon East District Hub",
+    center: "PLK Lee Chiu Kong Memorial Centre",
     priority: "High",
     status: "Draft",
     assignee: "Lee Wai Ling",
@@ -163,7 +171,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0899",
     title: "Kitchen Exhaust Fan Motor Repair",
-    center: "\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3",
+    center: "PLK Shek Kip Mei Community Services Centre",
     priority: "High",
     status: "Draft",
     assignee: "Lee Wai Ling",
@@ -186,7 +194,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0891",
     title: "HVAC Chiller Unit Repair — Block A",
-    center: "Kowloon East District Hub",
+    center: "PLK Lee Chiu Kong Memorial Centre",
     priority: "High",
     status: "Pending SSD Service Manager Endorsement",
     assignee: "Chan Siu Ming",
@@ -208,7 +216,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0904",
     title: "Carpark Barrier Gate Replacement",
-    center: "Island South Facility",
+    center: "PLK Y.C. Cheng Centre",
     priority: "Medium",
     status: "Pending SSD Service Manager Endorsement",
     assignee: "Chan Siu Ming",
@@ -229,7 +237,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0905",
     title: "LED Lighting Upgrade — All Corridors",
-    center: "New Territories North Office",
+    center: "PLK Tin Shui Wai Rehabilitation Centre",
     priority: "Low",
     status: "Pending SSD Service Manager Endorsement",
     assignee: "Chan Siu Ming",
@@ -250,7 +258,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0894",
     title: "Electrical Distribution Board Upgrade",
-    center: "Island South Facility",
+    center: "PLK Y.C. Cheng Centre",
     priority: "High",
     status: "Pending SSD AS Endorsement",
     assignee: "Wong Wai Keung",
@@ -274,7 +282,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0892",
     title: "Fire Suppression System Servicing",
-    center: "\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3",
+    center: "PLK Shek Kip Mei Community Services Centre",
     priority: "Critical",
     status: "Pending PWD Proceed IAS",
     assignee: "Wong Wai Keung",
@@ -296,7 +304,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0906",
     title: "Emergency Exit Signage Replacement",
-    center: "New Territories North Office",
+    center: "PLK Tin Shui Wai Rehabilitation Centre",
     priority: "High",
     status: "Pending PWD Proceed IAS",
     assignee: "Wong Wai Keung",
@@ -319,7 +327,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0893",
     title: "Bathroom Renovation — Level 2",
-    center: "New Territories North Office",
+    center: "PLK Tin Shui Wai Rehabilitation Centre",
     priority: "High",
     status: "Under PWD Grouping",
     assignee: "Kwok Tai Man",
@@ -342,7 +350,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0907",
     title: "Lift Motor Room Ventilation Upgrade",
-    center: "Kowloon East District Hub",
+    center: "PLK Lee Chiu Kong Memorial Centre",
     priority: "High",
     status: "Under PWD Grouping",
     assignee: "Kwok Tai Man",
@@ -366,7 +374,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0895",
     title: "Parking Lot Line Repainting",
-    center: "Island South Facility",
+    center: "PLK Y.C. Cheng Centre",
     priority: "Low",
     status: "Pending SSD G&C Review",
     assignee: "Lee Mei Ling",
@@ -387,7 +395,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0908",
     title: "Water Tank Cleaning & Disinfection",
-    center: "\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3",
+    center: "PLK Shek Kip Mei Community Services Centre",
     priority: "Medium",
     status: "Pending OIC Review",
     assignee: "Lee Mei Ling",
@@ -408,7 +416,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0896",
     title: "CCTV System Upgrade — 64 Camera IP Migration",
-    center: "\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3",
+    center: "PLK Shek Kip Mei Community Services Centre",
     priority: "Medium",
     status: "Approved IAS",
     assignee: "Cheung Wai Kwong",
@@ -432,7 +440,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0889",
     title: "Generator Servicing & Load Bank Test",
-    center: "Island South Facility",
+    center: "PLK Y.C. Cheng Centre",
     priority: "High",
     status: "In Progress",
     assignee: "Lee Mei Ling",
@@ -456,7 +464,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0880",
     title: "Annual Fire Alarm Panel Testing",
-    center: "Kowloon East District Hub",
+    center: "PLK Lee Chiu Kong Memorial Centre",
     priority: "Critical",
     status: "Completed",
     assignee: "Chan Siu Ming",
@@ -478,7 +486,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0882",
     title: "Carpet Cleaning — All Meeting Rooms",
-    center: "New Territories North Office",
+    center: "PLK Tin Shui Wai Rehabilitation Centre",
     priority: "Low",
     status: "Completed",
     assignee: "Chan Siu Ming",
@@ -499,7 +507,7 @@ export const WORK_ORDERS = [
   {
     id: "WO-2026-0875",
     title: "Window Cleaning — External (Bi-Annual)",
-    center: "Island South Facility",
+    center: "PLK Y.C. Cheng Centre",
     priority: "Low",
     status: "Completed",
     assignee: "Chan Siu Ming",
@@ -602,32 +610,40 @@ export const FLOOR_PLAN_ASSETS = [
 ];
 
 export const PROPERTIES = [
-  { id: 1, name: "\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3", type: "Community Center", address: "Sham Shui Po, Kowloon", units: 24, occupancy: 96, status: "Active" },
-  { id: 2, name: "Kowloon East District Hub", type: "District Hub", address: "Kwun Tong, Kowloon", units: 48, occupancy: 92, status: "Active" },
-  { id: 3, name: "New Territories North Office", type: "Regional Office", address: "Fanling, NT", units: 36, occupancy: 89, status: "Active" },
-  { id: 4, name: "Island South Facility", type: "Multi-purpose", address: "Aberdeen, HK Island", units: 30, occupancy: 97, status: "Active" },
+  { id: 1, name: "PLK Main Building (Causeway Bay)", type: "Headquarters", address: "66 Leighton Road, Causeway Bay", units: 42, occupancy: 98, status: "Active" },
+  { id: 2, name: "PLK Shek Kip Mei Community Services Centre", type: "Community Centre", address: "Sham Shui Po, Kowloon", units: 24, occupancy: 96, status: "Active" },
+  { id: 3, name: "PLK Making Life Beautiful Integrated Health Centre", type: "Health Centre", address: "Kowloon Bay, Kowloon", units: 18, occupancy: 91, status: "Active" },
+  { id: 4, name: "PLK Cheerful Court Integrated Health Centre", type: "Health Centre", address: "Sham Shui Po, Kowloon", units: 16, occupancy: 94, status: "Active" },
+  { id: 5, name: "PLK Tin Shui Wai Rehabilitation Centre", type: "Rehabilitation Centre", address: "Tin Shui Wai, New Territories", units: 36, occupancy: 89, status: "Active" },
+  { id: 6, name: "PLK Lee Chiu Kong Memorial Centre", type: "Rehabilitation Centre", address: "Kwun Tong, Kowloon", units: 32, occupancy: 93, status: "Active" },
+  { id: 7, name: "PLK Y.C. Cheng Centre", type: "Rehabilitation Centre", address: "Aberdeen, Hong Kong Island", units: 28, occupancy: 87, status: "Active" },
+  { id: 8, name: "PLK Sai Ying Pun Home for the Elderly", type: "Elderly Home", address: "Sai Ying Pun, Hong Kong Island", units: 48, occupancy: 97, status: "Active" },
+  { id: 9, name: "PLK Wan Chai Home for the Elderly", type: "Elderly Home", address: "Wan Chai, Hong Kong Island", units: 40, occupancy: 95, status: "Active" },
+  { id: 10, name: "PLK Kwok Law Kwai Chun Home for the Elderly", type: "Elderly Home", address: "Sheung Wan, Hong Kong Island", units: 38, occupancy: 92, status: "Active" },
+  { id: 11, name: "PLK Angela Leong On Kei Kindergarten-cum-Nursery", type: "Child Care Centre", address: "Sham Shui Po, Kowloon", units: 20, occupancy: 100, status: "Active" },
+  { id: 12, name: "PLK Child Development Centre (Causeway Bay)", type: "Child Care Centre", address: "66 Leighton Road, Causeway Bay", units: 14, occupancy: 86, status: "Active" },
 ];
 
 export const ASSETS = [
-  { id: "AST-001", name: "Central AHU System (CH-03)", type: "HVAC", location: "Kowloon East", status: "Operational", lastService: "2026-07-15", nextService: "2026-10-15", manufacturer: "Carrier", model: "30XA-120", installYear: 2019 },
-  { id: "AST-002", name: "Fire Suppression System", type: "Fire Safety", location: "Sham Shui Po", status: "Needs Inspection", lastService: "2026-04-01", nextService: "2026-08-20", manufacturer: "Tyco", model: "Sprinkler SYS-A", installYear: 2017 },
-  { id: "AST-003", name: "Elevator Bank A (3 units)", type: "Vertical Transport", location: "Kowloon East", status: "Operational", lastService: "2026-06-20", nextService: "2026-09-20", manufacturer: "Otis", model: "GEN2-1600", installYear: 2018 },
-  { id: "AST-004", name: "Backup Generator 500kVA", type: "Power", location: "Island South", status: "Under Maintenance", lastService: "2026-08-10", nextService: "2026-08-17", manufacturer: "Cummins", model: "C500D5", installYear: 2016 },
+  { id: "AST-001", name: "Central AHU System (CH-03)", type: "HVAC", location: "PLK Lee Chiu Kong Memorial Centre", status: "Operational", lastService: "2026-07-15", nextService: "2026-10-15", manufacturer: "Carrier", model: "30XA-120", installYear: 2019 },
+  { id: "AST-002", name: "Fire Suppression System", type: "Fire Safety", location: "PLK Shek Kip Mei Community Services Centre", status: "Needs Inspection", lastService: "2026-04-01", nextService: "2026-08-20", manufacturer: "Tyco", model: "Sprinkler SYS-A", installYear: 2017 },
+  { id: "AST-003", name: "Elevator Bank A (3 units)", type: "Vertical Transport", location: "PLK Lee Chiu Kong Memorial Centre", status: "Operational", lastService: "2026-06-20", nextService: "2026-09-20", manufacturer: "Otis", model: "GEN2-1600", installYear: 2018 },
+  { id: "AST-004", name: "Backup Generator 500kVA", type: "Power", location: "PLK Y.C. Cheng Centre", status: "Under Maintenance", lastService: "2026-08-10", nextService: "2026-08-17", manufacturer: "Cummins", model: "C500D5", installYear: 2016 },
   { id: "AST-005", name: "CCTV Network (64 cameras)", type: "Security", location: "All Sites", status: "Operational", lastService: "2026-08-01", nextService: "2026-11-01", manufacturer: "Hikvision", model: "DS-2CD series", installYear: 2020 },
-  { id: "AST-006", name: "Water Pump Station", type: "Plumbing", location: "New Territories", status: "Operational", lastService: "2026-07-20", nextService: "2026-10-20", manufacturer: "Grundfos", model: "CR 32-4", installYear: 2021 },
-  { id: "AST-007", name: "Kitchen Exhaust System", type: "MEP", location: "Sham Shui Po", status: "Needs Inspection", lastService: "2026-05-15", nextService: "2026-08-18", manufacturer: "Halton", model: "Capture Ray V", installYear: 2019 },
-  { id: "AST-008", name: "LED Lighting — Corridors", type: "Electrical", location: "New Territories", status: "Operational", lastService: "2026-03-01", nextService: "2027-03-01", manufacturer: "Philips", model: "CoreLine Panel", installYear: 2023 },
+  { id: "AST-006", name: "Water Pump Station", type: "Plumbing", location: "PLK Tin Shui Wai Rehabilitation Centre", status: "Operational", lastService: "2026-07-20", nextService: "2026-10-20", manufacturer: "Grundfos", model: "CR 32-4", installYear: 2021 },
+  { id: "AST-007", name: "Kitchen Exhaust System", type: "MEP", location: "PLK Shek Kip Mei Community Services Centre", status: "Needs Inspection", lastService: "2026-05-15", nextService: "2026-08-18", manufacturer: "Halton", model: "Capture Ray V", installYear: 2019 },
+  { id: "AST-008", name: "LED Lighting — Corridors", type: "Electrical", location: "PLK Tin Shui Wai Rehabilitation Centre", status: "Operational", lastService: "2026-03-01", nextService: "2027-03-01", manufacturer: "Philips", model: "CoreLine Panel", installYear: 2023 },
 ];
 
 export const COMPLIANCE_DOCS = [
-  { id: 1, name: "FS251 Fire Safety Certificate", type: "Certificate", expiry: "2026-08-21", status: "Expiring", center: "Kowloon East" },
+  { id: 1, name: "FS251 Fire Safety Certificate", type: "Certificate", expiry: "2026-08-21", status: "Expiring", center: "PLK Lee Chiu Kong Memorial Centre" },
   { id: 2, name: "AMSL Insurance Policy", type: "Insurance", expiry: "2026-12-31", status: "Valid", center: "All" },
-  { id: 3, name: "Building Inspection Report", type: "Inspection", expiry: "2027-03-15", status: "Valid", center: "Sham Shui Po" },
-  { id: 4, name: "Environmental Impact Assessment", type: "Assessment", expiry: "2026-09-30", status: "Valid", center: "New Territories" },
-  { id: 5, name: "Occupational Safety Certificate", type: "Certificate", expiry: "2026-11-01", status: "Valid", center: "Island South" },
-  { id: 6, name: "Electrical Safety Certificate", type: "Certificate", expiry: "2026-08-25", status: "Expiring", center: "Kowloon East" },
-  { id: 7, name: "Lift Inspection Certificate", type: "Certificate", expiry: "2026-12-15", status: "Valid", center: "Kowloon East" },
-  { id: 8, name: "Water Quality Test Report", type: "Test Report", expiry: "2026-09-15", status: "Valid", center: "Sham Shui Po" },
+  { id: 3, name: "Building Inspection Report", type: "Inspection", expiry: "2027-03-15", status: "Valid", center: "PLK Shek Kip Mei Community Services Centre" },
+  { id: 4, name: "Environmental Impact Assessment", type: "Assessment", expiry: "2026-09-30", status: "Valid", center: "PLK Tin Shui Wai Rehabilitation Centre" },
+  { id: 5, name: "Occupational Safety Certificate", type: "Certificate", expiry: "2026-11-01", status: "Valid", center: "PLK Y.C. Cheng Centre" },
+  { id: 6, name: "Electrical Safety Certificate", type: "Certificate", expiry: "2026-08-25", status: "Expiring", center: "PLK Lee Chiu Kong Memorial Centre" },
+  { id: 7, name: "Lift Inspection Certificate", type: "Certificate", expiry: "2026-12-15", status: "Valid", center: "PLK Lee Chiu Kong Memorial Centre" },
+  { id: 8, name: "Water Quality Test Report", type: "Test Report", expiry: "2026-09-15", status: "Valid", center: "PLK Shek Kip Mei Community Services Centre" },
 ];
 
 export const REPORTS_DATA = [

@@ -36,7 +36,7 @@ const MOCK_ASSETS = [
 export default function WorkOrderCreate({ onBack, onViewWO }) {
   const { addWorkOrder, getNextWoId } = useWorkOrders();
   const today = 'Tuesday, 18 August 2026';
-  const portfolio = '\u5029\u6587\u73B2(\u6DF1\u6C34\u57D7)\u5152\u7AE5\u53D1\u5C55\u4E2D\u5FC3';
+  const portfolio = 'PLK Shek Kip Mei Community Services Centre';
 
   const [form, setForm] = useState({
     title: '',
