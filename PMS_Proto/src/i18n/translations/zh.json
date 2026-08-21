@@ -255,6 +255,7 @@
   "settings.profile.timezone": "時區",
   "settings.profile.save": "儲存變更",
   "settings.profile.ssoNote": "由企業 SSO 管理 — 請聯絡資訊科技部更新",
+  "settings.profile.uploadAvatar": "上載照片",
 
   "settings.roles.title": "角色與權限",
   "settings.roles.currentRole": "目前角色：",
@@ -324,6 +325,7 @@
   "settings.loc.timezone": "時區",
   "settings.loc.preview": "預覽",
   "settings.loc.save": "儲存偏好設定",
+  "settings.loc.reset": "還原預設值",
   "settings.loc.hour12": "12 小時制",
   "settings.loc.hour24": "24 小時制",
 

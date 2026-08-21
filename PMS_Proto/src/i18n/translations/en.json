@@ -255,6 +255,7 @@
   "settings.profile.timezone": "Timezone",
   "settings.profile.save": "Save Changes",
   "settings.profile.ssoNote": "Managed by corporate SSO — contact IT to update",
+  "settings.profile.uploadAvatar": "Upload Photo",
 
   "settings.roles.title": "Role & Permissions",
   "settings.roles.currentRole": "Current Role:",
@@ -324,6 +325,7 @@
   "settings.loc.timezone": "Timezone",
   "settings.loc.preview": "Preview",
   "settings.loc.save": "Save Preferences",
+  "settings.loc.reset": "Reset to Defaults",
   "settings.loc.hour12": "12-hour",
   "settings.loc.hour24": "24-hour",
 

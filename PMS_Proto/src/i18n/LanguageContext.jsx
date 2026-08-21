@@ -36,3 +36,8 @@ export function LanguageProvider({ children }) {
 export function useTranslation() {
   return useContext(LanguageContext);
 }
+
+export function useLanguage() {
+  const { language, setLanguage } = useContext(LanguageContext);
+  return { language, setLanguage };
+}
