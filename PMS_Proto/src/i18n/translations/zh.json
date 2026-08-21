@@ -317,7 +317,7 @@
   "settings.notif.save": "儲存偏好設定",
 
   "settings.loc.title": "地區設定",
-  "settings.loc.sectionLanguage": "語言",
+  "settings.loc.preferredLanguage": "偏好語言",
   "settings.loc.languageHelper": "變更選單、按鈕及導覽標籤",
   "settings.loc.language": "語言",
   "settings.loc.sectionRegion": "地區與格式",

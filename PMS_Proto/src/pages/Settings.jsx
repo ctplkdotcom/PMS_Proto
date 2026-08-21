@@ -479,7 +479,7 @@ function LocalizationSection({ t, language, setLanguage }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <Globe size={16} style={{ color: 'var(--info)' }} />
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.sectionLanguage')}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{t('settings.loc.preferredLanguage')}</span>
           </div>
           <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 12px 0' }}>{t('settings.loc.languageHelper')}</p>
           <select value={language} onChange={(e) => setLanguage(e.target.value)} style={selectStyle}>

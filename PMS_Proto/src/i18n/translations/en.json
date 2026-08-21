@@ -317,7 +317,7 @@
   "settings.notif.save": "Save Preferences",
 
   "settings.loc.title": "Localization",
-  "settings.loc.sectionLanguage": "Language",
+  "settings.loc.preferredLanguage": "Preferred Language",
   "settings.loc.languageHelper": "Changes menus, buttons, and navigation labels",
   "settings.loc.language": "Language",
   "settings.loc.sectionRegion": "Region & Formats",
