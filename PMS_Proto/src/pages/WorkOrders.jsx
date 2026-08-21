@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useWorkOrders } from '../context/WorkOrderContext';
+import { useTranslation } from '../i18n/LanguageContext';
 import { Plus, Search, Eye, Pencil, Trash2, X, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Info, CheckCircle, Calendar, User, MapPin } from 'lucide-react';
 
 const ALL_STATUSES = ['Draft', 'Pending SSD Service Manager Endorsement', 'Pending SSD G&C Review', 'Pending SSD AS Endorsement', 'Under PWD Grouping', 'Pending OIC Review', 'Pending PWD Proceed IAS', 'Submitted to IAS for Tendering', 'Approved IAS', 'In Progress', 'Completed'];
@@ -87,6 +88,7 @@ function FilterDropdown({ label, options, selected, onSelect, counts }) {
 export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter }) {
   const { permissions } = useAuth();
   const { workOrders, deleteWorkOrder } = useWorkOrders();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -176,14 +178,14 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>Work Orders</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>{t('workOrders.title')}</h1>
           <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
-            Showing {filtered.length} of {workOrders.length} orders
+            {filtered.length} {t('workOrders.results')}
           </p>
         </div>
         {permissions?.canCreateWO && (
           <button onClick={onCreateWorkOrder} style={{ padding: '10px 20px', fontSize: 13, fontWeight: 600, borderRadius: 8, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 1px 3px rgba(37,99,235,0.3)' }}>
-            <Plus size={16} /> New Work Order
+            <Plus size={16} /> {t('workOrders.create')}
           </button>
         )}
       </div>
@@ -294,7 +296,7 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter
           <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
           <input
             value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by ID, title, or assignee..."
+            placeholder={t('workOrders.searchPlaceholder')}
             style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13, background: '#fff', outline: 'none' }}
           />
         </div>
@@ -331,14 +333,14 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter
             <thead>
               <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
                 {[
-                  { key: 'id', label: 'ID', width: 100 },
-                  { key: 'title', label: 'Title', width: undefined },
+                  { key: 'id', label: t('workOrders.col.id'), width: 100 },
+                  { key: 'title', label: t('workOrders.col.title'), width: undefined },
                   { key: 'center', label: 'Center', width: 160 },
-                  { key: 'priority', label: 'Priority', width: 100 },
-                  { key: 'status', label: 'Status', width: 200 },
-                  { key: 'pwdInvolvement', label: 'PWD', width: 80 },
-                  { key: 'assignee', label: 'Assignee', width: 140 },
-                  { key: 'dueDate', label: 'Due Date', width: 110 },
+                  { key: 'priority', label: t('workOrders.col.priority'), width: 100 },
+                  { key: 'status', label: t('workOrders.col.status'), width: 200 },
+                  { key: 'pwdInvolvement', label: t('workOrders.col.pwd'), width: 80 },
+                  { key: 'assignee', label: t('workOrders.col.assignee'), width: 140 },
+                  { key: 'dueDate', label: t('workOrders.col.due'), width: 110 },
                 ].map((col) => (
                   <th
                     key={col.key}
@@ -356,7 +358,7 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter
                     </span>
                   </th>
                 ))}
-                <th style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Actions</th>
+                <th style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('workOrders.col.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -377,7 +379,7 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter
                       background: wo.pwdInvolvement === 'with' ? '#FEF3C7' : '#F1F5F9',
                       color: wo.pwdInvolvement === 'with' ? '#B45309' : '#94A3B8',
                     }}>
-                      {wo.pwdInvolvement === 'with' ? 'Yes' : 'No'}
+                      {wo.pwdInvolvement === 'with' ? t('common.yes') : t('common.no')}
                     </span>
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--foreground)' }}>{wo.assignee}</td>
@@ -396,11 +398,11 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter
         </div>
         {filtered.length === 0 && (
           <div style={{ padding: 48, textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
-            <div style={{ fontSize: 16, marginBottom: 8, color: '#CBD5E1' }}>No results found</div>
-            <div>Try adjusting your search or filters</div>
+            <div style={{ fontSize: 16, marginBottom: 8, color: '#CBD5E1' }}>{t('workOrders.noResults')}</div>
+            <div>{t('workOrders.tryAdjusting')}</div>
             {activeFilters.length > 0 && (
               <button onClick={clearAll} style={{ marginTop: 12, padding: '6px 14px', borderRadius: 6, border: '1px solid var(--border)', background: '#fff', fontSize: 12, fontWeight: 600, color: 'var(--primary)', cursor: 'pointer' }}>
-                Clear all filters
+                {t('workOrders.clearAll')}
               </button>
             )}
           </div>
@@ -428,18 +430,18 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter
             <div style={{ padding: '20px 24px' }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 16 }}>{previewWO.title}</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 24px' }}>
-                <FieldRow icon={<MapPin size={13} />} label="Center" value={previewWO.center} />
-                <FieldRow icon={<Info size={13} />} label="Category" value={previewWO.category} />
-                <FieldRow icon={<Info size={13} />} label="Priority" value={
+                <FieldRow icon={<MapPin size={13} />} label={t('workOrders.previewCenter')} value={previewWO.center} />
+                <FieldRow icon={<Info size={13} />} label={t('workOrders.previewCategory')} value={previewWO.category} />
+                <FieldRow icon={<Info size={13} />} label={t('workOrders.previewPriority')} value={
                   <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 8, background: previewWO.priority === 'Critical' ? '#FEE2E2' : previewWO.priority === 'High' ? '#FEF3C7' : previewWO.priority === 'Medium' ? '#DBEAFE' : '#F1F5F9', color: previewWO.priority === 'Critical' ? '#DC2626' : previewWO.priority === 'High' ? '#B45309' : previewWO.priority === 'Medium' ? '#2563EB' : '#64748B' }}>{previewWO.priority}</span>
                 } />
-                <FieldRow icon={<CheckCircle size={13} />} label="PWD Involved" value={previewWO.pwdInvolvement === 'with' ? 'Yes' : 'No'} />
-                <FieldRow icon={<User size={13} />} label="Assignee" value={previewWO.assignee} />
-                <FieldRow icon={<Calendar size={13} />} label="Due Date" value={previewWO.dueDate} />
+                <FieldRow icon={<CheckCircle size={13} />} label={t('workOrders.previewPwd')} value={previewWO.pwdInvolvement === 'with' ? t('common.yes') : t('common.no')} />
+                <FieldRow icon={<User size={13} />} label={t('workOrders.previewAssignee')} value={previewWO.assignee} />
+                <FieldRow icon={<Calendar size={13} />} label={t('workOrders.previewDue')} value={previewWO.dueDate} />
               </div>
               {previewWO.description && (
                 <div style={{ marginTop: 18, paddingTop: 16, borderTop: '1px solid #F1F5F9' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Description</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>{t('workOrders.previewDescription')}</div>
                   <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.6 }}>{previewWO.description}</div>
                 </div>
               )}
@@ -447,10 +449,10 @@ export default function WorkOrders({ onCreateWorkOrder, onViewWO, selectedCenter
             {/* Footer */}
             <div style={{ padding: '14px 24px', borderTop: '1px solid #E2E8F0', display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
               <button onClick={() => { setPreviewWO(null); onViewWO(previewWO.id); }} style={{ padding: '7px 16px', borderRadius: 6, border: '1px solid #E2E8F0', background: '#fff', fontSize: 12, fontWeight: 600, color: '#334155', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Pencil size={13} /> Edit
+                <Pencil size={13} /> {t('workOrders.previewEdit')}
               </button>
               <button onClick={() => setPreviewWO(null)} style={{ padding: '7px 16px', borderRadius: 6, border: 'none', background: '#0F172A', fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
-                Close
+                {t('workOrders.previewClose')}
               </button>
             </div>
           </div>

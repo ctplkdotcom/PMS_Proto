@@ -18,8 +18,8 @@ export const ROLES = {
     canEditTaskDetails: false,
     canAddMapAssets: false,
     centerScope: "ASSIGNED_ONLY",
-    label: "Centre OIC",
-    subtext: "Center operations & WO submission",
+    label: "SSD OIC",
+    subtext: "Centre operations & WO submission",
   },
   SERVICE_MANAGER: {
     name: "Wong Wai Keung",
@@ -29,7 +29,7 @@ export const ROLES = {
     canEditTaskDetails: false,
     canAddMapAssets: false,
     centerScope: "CLUSTER",
-    label: "Service Manager",
+    label: "SSD Service Manager",
     subtext: "Cluster endorsement & WO approval",
   },
   SSD_AS: {
@@ -62,7 +62,7 @@ export const ROLES = {
     canEditTaskDetails: true,
     canAddMapAssets: true,
     centerScope: "ALL",
-    label: "PWD Officer",
+    label: "PWD",
     subtext: "Technical assessment, task editing, map asset linking & tendering",
   },
 };
@@ -578,24 +578,6 @@ export const NOTIFICATIONS = [
     text: "Electrical Safety Certificate expires in 7 days — Kowloon East",
     time: "2 days ago",
   },
-];
-
-export const KPI_DATA = {
-  occupancy: { value: 94.2, change: 1.3, trend: "up" },
-  revenue: { value: 2847500, change: 5.8, trend: "up" },
-  workOrders: { value: 42, open: 28, closed: 14, trend: "stable" },
-  compliance: { value: 97.1, change: -0.4, trend: "down" },
-};
-
-export const CHART_DATA = [
-  { month: "Jan", occupancy: 88, revenue: 2100 },
-  { month: "Feb", occupancy: 90, revenue: 2250 },
-  { month: "Mar", occupancy: 87, revenue: 2050 },
-  { month: "Apr", occupancy: 92, revenue: 2400 },
-  { month: "May", occupancy: 93, revenue: 2550 },
-  { month: "Jun", occupancy: 91, revenue: 2350 },
-  { month: "Jul", occupancy: 94, revenue: 2700 },
-  { month: "Aug", occupancy: 94.2, revenue: 2847 },
 ];
 
 export const FLOOR_PLAN_ASSETS = [

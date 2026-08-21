@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useWorkOrders } from '../context/WorkOrderContext';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../i18n/LanguageContext';
 import {
   ArrowLeft, Paperclip, AlertTriangle, RotateCcw, Send, Info,
   CheckCircle, Circle, Download, Upload, FileText, X, Check,
@@ -173,6 +174,7 @@ function ChecklistBadge({ state }) {
 export default function WorkOrderDetail({ woId, onBack }) {
   const { role } = useAuth();
   const { workOrders, updateWorkOrderStatus } = useWorkOrders();
+  const { t } = useTranslation();
   const wo = workOrders.find((w) => w.id === woId);
 
   const [iasHovered, setIasHovered] = useState(false);
@@ -254,7 +256,7 @@ export default function WorkOrderDetail({ woId, onBack }) {
   if (!wo) {
     return (
       <div style={{ padding: 40, textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
-        Work order not found.
+        {t('common.noData')}
       </div>
     );
   }

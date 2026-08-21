@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { WorkOrderProvider } from './context/WorkOrderContext';
+import { LanguageProvider } from './i18n/LanguageContext';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
@@ -104,10 +105,12 @@ function AppLayout() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <WorkOrderProvider>
-        <AppLayout />
-      </WorkOrderProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <WorkOrderProvider>
+          <AppLayout />
+        </WorkOrderProvider>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }

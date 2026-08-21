@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { ArrowLeft, Building2, MapPin, Ruler, Calendar, User, Phone, Mail, FileText, ShieldCheck, AlertTriangle, CheckCircle, Clock, Package, ClipboardList, Upload, ChevronDown, ChevronUp } from 'lucide-react';
 import { PROPERTIES, COMPLIANCE_DOCS, ASSETS, WORK_ORDERS } from '../data/constants';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function PropertyDetail({ propertyId, onBack }) {
+  const { t } = useTranslation();
   const prop = PROPERTIES.find((p) => p.id === propertyId);
   const [expandedSection, setExpandedSection] = useState({ compliance: true, attachments: true, wo: false, assets: false });
 
@@ -10,7 +12,7 @@ export default function PropertyDetail({ propertyId, onBack }) {
     return (
       <div style={{ padding: 24 }}>
         <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, marginBottom: 20 }}>
-          <ArrowLeft size={16} /> Back to Properties
+          <ArrowLeft size={16} /> {t('propertyDetail.back')}
         </button>
         <div style={{ padding: 48, textAlign: 'center', color: '#94A3B8' }}>Property not found</div>
       </div>
@@ -37,7 +39,7 @@ export default function PropertyDetail({ propertyId, onBack }) {
     <div style={{ padding: 24, maxWidth: 1000 }}>
       {/* Back Button */}
       <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, marginBottom: 20 }}>
-        <ArrowLeft size={16} /> Back to Properties
+          <ArrowLeft size={16} /> {t('propertyDetail.back')}
       </button>
 
       {/* Header */}

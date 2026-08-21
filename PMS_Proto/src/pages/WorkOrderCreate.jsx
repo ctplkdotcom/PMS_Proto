@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useWorkOrders } from '../context/WorkOrderContext';
+import { useTranslation } from '../i18n/LanguageContext';
 import {
   ArrowLeft, Save, X, MapPin, Plus, Pencil, Image, Paperclip, Trash2,
   ChevronDown, Map, AlertTriangle, Send, Zap,
@@ -35,6 +36,7 @@ const MOCK_ASSETS = [
 
 export default function WorkOrderCreate({ onBack, onViewWO }) {
   const { addWorkOrder, getNextWoId } = useWorkOrders();
+  const { t } = useTranslation();
   const today = 'Tuesday, 18 August 2026';
   const portfolio = 'PLK Shek Kip Mei Community Services Centre';
 
@@ -123,7 +125,7 @@ export default function WorkOrderCreate({ onBack, onViewWO }) {
               cursor: 'pointer', fontSize: 12, fontWeight: 600, color: '#475569',
             }}
           >
-            <ArrowLeft size={14} /> Back to Dashboard
+            <ArrowLeft size={14} /> {t('woCreate.back')}
           </button>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--foreground)' }}>Work Order Tracking</div>

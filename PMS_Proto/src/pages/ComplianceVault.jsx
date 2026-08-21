@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import { COMPLIANCE_DOCS, COMPLIANCE_CATEGORIES, PROPERTIES } from '../data/constants';
+import { useTranslation } from '../i18n/LanguageContext';
 import { Search, ShieldCheck, AlertTriangle, CheckCircle, Clock, Upload, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 const STATUS_OPTIONS = ['All', 'Valid', 'Expiring', 'Expired'];
 
 export default function ComplianceVault({ selectedCenter }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -72,25 +74,25 @@ export default function ComplianceVault({ selectedCenter }) {
     <div style={{ padding: 24, maxWidth: 1400 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>Compliance Vault</h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{totalDocs} documents {isGlobalCentre ? `at ${selectedCenter}` : `across ${PROPERTIES.length} properties`}</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>{t('compliance.title')}</h1>
+          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{totalDocs} {t('compliance.documents')} {isGlobalCentre ? `${t('compliance.at')} ${selectedCenter}` : `${t('compliance.across')} ${PROPERTIES.length} properties`}</p>
         </div>
         <button style={{ padding: '10px 20px', fontSize: 13, fontWeight: 600, borderRadius: 8, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Upload size={16} /> Upload Document
+          <Upload size={16} /> {t('compliance.upload')}
         </button>
       </div>
 
       {/* Summary Cards */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
-        <SummaryCard icon={<CheckCircle size={20} color="var(--success)" />} iconBg="var(--success-bg)" value={validCount} label="Valid" />
-        <SummaryCard icon={<AlertTriangle size={20} color="#B45309" />} iconBg="#FEF3C7" value={expiringCount} label="Expiring Soon" />
-        <SummaryCard icon={<Clock size={20} color="#DC2626" />} iconBg="#FEE2E2" value={expiredCount} label="Expired" />
-        <SummaryCard icon={<ShieldCheck size={20} color="var(--info)" />} iconBg="var(--info-bg)" value={`${complianceRate}%`} label="Compliance Rate" />
+        <SummaryCard icon={<CheckCircle size={20} color="var(--success)" />} iconBg="var(--success-bg)" value={validCount} label={t('compliance.valid')} />
+        <SummaryCard icon={<AlertTriangle size={20} color="#B45309" />} iconBg="#FEF3C7" value={expiringCount} label={t('compliance.expiringSoon')} />
+        <SummaryCard icon={<Clock size={20} color="#DC2626" />} iconBg="#FEE2E2" value={expiredCount} label={t('compliance.expired')} />
+        <SummaryCard icon={<ShieldCheck size={20} color="var(--info)" />} iconBg="var(--info-bg)" value={`${complianceRate}%`} label={t('compliance.complianceRate')} />
       </div>
 
       {/* Category Coverage */}
       <div style={{ background: '#fff', borderRadius: 12, border: '1px solid var(--border)', boxShadow: 'var(--card-shadow)', padding: 20, marginBottom: 20 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)', marginBottom: 14 }}>Coverage by Category</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)', marginBottom: 14 }}>{t('compliance.coverageCategory')}</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
           {categoryCoverage.map(({ cat, total, valid, pct }) => (
             <div key={cat} style={{ padding: 12, borderRadius: 8, border: '1px solid #E2E8F0' }}>
@@ -101,7 +103,7 @@ export default function ComplianceVault({ selectedCenter }) {
               <div style={{ height: 6, borderRadius: 3, background: '#E2E8F0', overflow: 'hidden' }}>
                 <div style={{ height: '100%', width: `${pct}%`, borderRadius: 3, background: pct === 100 ? 'var(--success)' : '#F59E0B', transition: 'width 0.3s' }} />
               </div>
-              <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>{valid}/{total} valid</div>
+              <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>{t('compliance.validCount', { valid, total })}</div>
             </div>
           ))}
         </div>
@@ -111,7 +113,7 @@ export default function ComplianceVault({ selectedCenter }) {
       <div style={{ display: 'flex', gap: 10, marginBottom: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flex: 1, minWidth: 240 }}>
           <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search documents, property, or reference..." style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13, background: '#fff', outline: 'none' }} />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('compliance.searchPlaceholder')} style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13, background: '#fff', outline: 'none' }} />
         </div>
         <FilterDropdown label="Category" options={['All', ...COMPLIANCE_CATEGORIES]} selected={categoryFilter} onSelect={setCategoryFilter} />
         <FilterDropdown label="Status" options={STATUS_OPTIONS} selected={statusFilter} onSelect={setStatusFilter} />
@@ -140,14 +142,14 @@ export default function ComplianceVault({ selectedCenter }) {
             <thead>
               <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
                 {[
-                  { key: 'name', label: 'Document', width: undefined },
-                  { key: 'category', label: 'Category', width: 130 },
-                  ...(!isGlobalCentre ? [{ key: 'center', label: 'Property', width: 200 }] : []),
-                  { key: 'documentRef', label: 'Ref', width: 120 },
-                  { key: 'inspectionDate', label: 'Inspected', width: 110 },
-                  { key: 'nextInspection', label: 'Next Due', width: 110 },
-                  { key: 'status', label: 'Status', width: 100 },
-                  { key: 'issuedBy', label: 'Issued By', width: 150 },
+                  { key: 'name', label: t('compliance.col.document'), width: undefined },
+                  { key: 'category', label: t('compliance.col.category'), width: 130 },
+                  ...(!isGlobalCentre ? [{ key: 'center', label: t('compliance.col.property'), width: 200 }] : []),
+                  { key: 'documentRef', label: t('compliance.col.ref'), width: 120 },
+                  { key: 'inspectionDate', label: t('compliance.col.inspected'), width: 110 },
+                  { key: 'nextInspection', label: t('compliance.col.nextDue'), width: 110 },
+                  { key: 'status', label: t('compliance.col.status'), width: 100 },
+                  { key: 'issuedBy', label: t('compliance.col.issuedBy'), width: 150 },
                 ].map((col) => (
                   <th key={col.key} onClick={() => handleSort(col.key)} style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', width: col.width, background: sortCol === col.key ? '#F1F5F9' : undefined }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -177,8 +179,8 @@ export default function ComplianceVault({ selectedCenter }) {
               ))}
               {filtered.length === 0 && (
                 <tr><td colSpan={isGlobalCentre ? 7 : 8} style={{ padding: 48, textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
-                  <div style={{ fontSize: 16, marginBottom: 8, color: '#CBD5E1' }}>No documents found</div>
-                  <div>Try adjusting your search or filters</div>
+                  <div style={{ fontSize: 16, marginBottom: 8, color: '#CBD5E1' }}>{t('compliance.noDocs')}</div>
+                  <div>{t('compliance.tryAdjusting')}</div>
                 </td></tr>
               )}
             </tbody>

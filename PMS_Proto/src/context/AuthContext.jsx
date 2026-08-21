@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react';
+import { useTranslation } from '../i18n/LanguageContext';
 import { ROLES } from '../data/constants';
 
 const AuthContext = createContext({
@@ -30,6 +31,8 @@ export function useAuth() {
 }
 
 function LoginScreen({ onLogin }) {
+  const { t } = useTranslation();
+
   return (
     <div style={{ display: 'flex', width: '100vw', height: '100vh', backgroundColor: '#F1F5F9', fontFamily: 'sans-serif' }}>
       <div style={{ flex: 1, padding: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRight: '1px solid #E2E8F0', backgroundColor: '#fff' }}>
@@ -39,22 +42,22 @@ function LoginScreen({ onLogin }) {
           </div>
           <span style={{ fontSize: 24, fontWeight: 800, color: '#0B132B', letterSpacing: '-0.02em' }}>PMS</span>
         </div>
-        <h1 style={{ fontSize: 32, fontWeight: 800, color: '#0F172A', marginBottom: 12, letterSpacing: '-0.02em' }}>Single Sign-On Portal</h1>
-        <p style={{ fontSize: 16, color: '#64748B', marginBottom: 40 }}>Corporate Authentication Gateway</p>
+        <h1 style={{ fontSize: 32, fontWeight: 800, color: '#0F172A', marginBottom: 12, letterSpacing: '-0.02em' }}>{t('login.ssoTitle')}</h1>
+        <p style={{ fontSize: 16, color: '#64748B', marginBottom: 40 }}>{t('login.ssoSubtitle')}</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 400 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>Corporate ID</label>
-            <input disabled placeholder="Enter your ID" style={{ padding: '12px 16px', borderRadius: 6, border: '1px solid #CBD5E1', backgroundColor: '#F8FAFC', color: '#94A3B8' }} />
+            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('login.corpId')}</label>
+            <input disabled placeholder={t('login.corpIdPlaceholder')} style={{ padding: '12px 16px', borderRadius: 6, border: '1px solid #CBD5E1', backgroundColor: '#F8FAFC', color: '#94A3B8' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>Password</label>
-            <input type="password" disabled placeholder="••••••••" style={{ padding: '12px 16px', borderRadius: 6, border: '1px solid #CBD5E1', backgroundColor: '#F8FAFC', color: '#94A3B8' }} />
+            <label style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{t('login.password')}</label>
+            <input type="password" disabled placeholder={t('login.passwordPlaceholder')} style={{ padding: '12px 16px', borderRadius: 6, border: '1px solid #CBD5E1', backgroundColor: '#F8FAFC', color: '#94A3B8' }} />
           </div>
-          <button disabled style={{ marginTop: 8, padding: 14, backgroundColor: '#94A3B8', color: '#fff', borderRadius: 6, border: 'none', fontSize: 15, fontWeight: 600 }}>Authenticate with Corporate SSO</button>
+          <button disabled style={{ marginTop: 8, padding: 14, backgroundColor: '#94A3B8', color: '#fff', borderRadius: 6, border: 'none', fontSize: 15, fontWeight: 600 }}>{t('login.ssoButton')}</button>
         </div>
       </div>
       <div style={{ flex: 1, padding: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflowY: 'auto' }}>
-        <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', marginBottom: 24 }}>Presentation Quick-Login (Select Role)</h2>
+        <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', marginBottom: 24 }}>{t('login.quickTitle')}</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {Object.entries(ROLES).map(([key, role]) => (
             <button

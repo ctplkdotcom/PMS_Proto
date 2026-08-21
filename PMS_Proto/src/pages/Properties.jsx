@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { PROPERTIES, COMPLIANCE_DOCS } from '../data/constants';
+import { useTranslation } from '../i18n/LanguageContext';
 import { Plus, Search, Eye, Pencil, X, ArrowUpDown, ArrowUp, ArrowDown, MapPin, Building2, Phone, Mail, User, FileText, Calendar, Ruler } from 'lucide-react';
 
 const ALL_TYPES = ['All', 'Headquarters', 'Community Centre', 'Health Centre', 'Rehabilitation Centre', 'Elderly Home', 'Child Care Centre'];
@@ -35,6 +36,7 @@ function FilterDropdown({ label, options, selected, onSelect, counts }) {
 }
 
 export default function Properties({ onViewProperty, selectedCenter }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
   const [districtFilter, setDistrictFilter] = useState('All');
@@ -92,11 +94,11 @@ export default function Properties({ onViewProperty, selectedCenter }) {
     <div style={{ padding: 24, maxWidth: 1400 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>Properties</h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{baseProperties.length} properties managed</p>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>{t('properties.title')}</h1>
+          <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{baseProperties.length} {t('properties.managed')}</p>
         </div>
         <button style={{ padding: '10px 20px', fontSize: 13, fontWeight: 600, borderRadius: 8, border: 'none', background: 'var(--primary)', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Plus size={16} /> Add Property
+          <Plus size={16} /> {t('properties.add')}
         </button>
       </div>
 
@@ -104,7 +106,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
       <div style={{ display: 'flex', gap: 10, marginBottom: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flex: 1, minWidth: 240 }}>
           <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name, address, district, or manager..." style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13, background: '#fff', outline: 'none' }} />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('properties.searchPlaceholder')} style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: 8, border: '1px solid var(--border)', fontSize: 13, background: '#fff', outline: 'none' }} />
         </div>
         <FilterDropdown label="Type" options={ALL_TYPES} selected={typeFilter} onSelect={setTypeFilter} counts={typeCounts} />
         <FilterDropdown label="District" options={ALL_DISTRICTS} selected={districtFilter} onSelect={setDistrictFilter} counts={districtCounts} />
@@ -130,19 +132,19 @@ export default function Properties({ onViewProperty, selectedCenter }) {
             <thead>
               <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
                 {[
-                  { key: 'name', label: 'Name', width: undefined },
-                  { key: 'type', label: 'Type', width: 140 },
-                  { key: 'district', label: 'District', width: 150 },
-                  { key: 'floorArea', label: 'Floor Area', width: 110 },
-                  { key: 'yearBuilt', label: 'Year Built', width: 100 },
-                  { key: 'status', label: 'Status', width: 90 },
-                  { key: 'contact', label: 'Contact', width: 150 },
+                  { key: 'name', label: t('properties.col.name'), width: undefined },
+                  { key: 'type', label: t('properties.col.type'), width: 140 },
+                  { key: 'district', label: t('properties.col.district'), width: 150 },
+                  { key: 'floorArea', label: t('properties.col.floorArea'), width: 110 },
+                  { key: 'yearBuilt', label: t('properties.col.yearBuilt'), width: 100 },
+                  { key: 'status', label: t('properties.col.status'), width: 90 },
+                  { key: 'contact', label: t('properties.col.contact'), width: 150 },
                 ].map((col) => (
                   <th key={col.key} onClick={() => handleSort(col.key)} style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', width: col.width, background: sortCol === col.key ? '#F1F5F9' : undefined }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>{col.label} <SortIcon col={col.key} sortCol={sortCol} sortDir={sortDir} /></span>
                   </th>
                 ))}
-                <th style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Actions</th>
+                <th style={{ padding: '12px 16px', fontSize: 11, fontWeight: 600, color: '#64748B', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('properties.col.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -176,8 +178,8 @@ export default function Properties({ onViewProperty, selectedCenter }) {
         </div>
         {filtered.length === 0 && (
           <div style={{ padding: 48, textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
-            <div style={{ fontSize: 16, marginBottom: 8, color: '#CBD5E1' }}>No properties found</div>
-            <div>Try adjusting your search or filters</div>
+            <div style={{ fontSize: 16, marginBottom: 8, color: '#CBD5E1' }}>{t('properties.noResults')}</div>
+            <div>{t('properties.tryAdjusting')}</div>
           </div>
         )}
       </div>
@@ -202,15 +204,15 @@ export default function Properties({ onViewProperty, selectedCenter }) {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 24px', marginBottom: 20 }}>
-                <PreviewField icon={<MapPin size={13} />} label="Address" value={previewProp.address} />
-                <PreviewField icon={<MapPin size={13} />} label="District" value={previewProp.district} />
-                <PreviewField icon={<Ruler size={13} />} label="Floor Area" value={`${previewProp.floorArea.toLocaleString()} sqm`} />
-                <PreviewField icon={<Calendar size={13} />} label="Year Built" value={previewProp.yearBuilt} />
+                <PreviewField icon={<MapPin size={13} />} label={t('propertyDetail.address')} value={previewProp.address} />
+                <PreviewField icon={<MapPin size={13} />} label={t('propertyDetail.district')} value={previewProp.district} />
+                <PreviewField icon={<Ruler size={13} />} label={t('propertyDetail.floorArea')} value={`${previewProp.floorArea.toLocaleString()} sqm`} />
+                <PreviewField icon={<Calendar size={13} />} label={t('propertyDetail.yearBuilt')} value={previewProp.yearBuilt} />
               </div>
 
               {/* Contact */}
               <div style={{ padding: 16, borderRadius: 10, border: '1px solid #E2E8F0', background: '#F8FAFC', marginBottom: 20 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>Contact Information</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>{t('propertyDetail.contactCard')}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}><User size={13} color="#64748B" /><span style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>{previewProp.contact.manager}</span><span style={{ fontSize: 11, color: '#94A3B8' }}>{previewProp.contact.role}</span></div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}><Phone size={13} color="#64748B" /><a href={`tel:${previewProp.contact.phone}`} style={{ fontSize: 13, color: 'var(--info)', textDecoration: 'none' }}>{previewProp.contact.phone}</a></div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Mail size={13} color="#64748B" /><a href={`mailto:${previewProp.contact.email}`} style={{ fontSize: 13, color: 'var(--info)', textDecoration: 'none' }}>{previewProp.contact.email}</a></div>
@@ -218,7 +220,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
 
               {/* Compliance Summary */}
               <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Compliance Documents</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>{t('propertyDetail.complianceDocuments')}</div>
                 <div style={{ display: 'flex', gap: 12 }}>
                   {(() => {
                     const docs = getPropDocs(previewProp.name);
@@ -227,9 +229,9 @@ export default function Properties({ onViewProperty, selectedCenter }) {
                     const expired = docs.filter((d) => d.status === 'Expired').length;
                     return (
                       <>
-                        <div style={{ flex: 1, padding: 10, background: '#F0FDF4', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: 'var(--success)' }}>{valid}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>Valid</div></div>
-                        <div style={{ flex: 1, padding: 10, background: expiring > 0 ? '#FEF3C7' : '#F8FAFC', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: expiring > 0 ? '#B45309' : '#94A3B8' }}>{expiring}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>Expiring</div></div>
-                        <div style={{ flex: 1, padding: 10, background: expired > 0 ? '#FEE2E2' : '#F8FAFC', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: expired > 0 ? '#DC2626' : '#94A3B8' }}>{expired}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>Expired</div></div>
+                        <div style={{ flex: 1, padding: 10, background: '#F0FDF4', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: 'var(--success)' }}>{valid}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>{t('compliance.valid')}</div></div>
+                        <div style={{ flex: 1, padding: 10, background: expiring > 0 ? '#FEF3C7' : '#F8FAFC', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: expiring > 0 ? '#B45309' : '#94A3B8' }}>{expiring}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>{t('compliance.expiringSoon')}</div></div>
+                        <div style={{ flex: 1, padding: 10, background: expired > 0 ? '#FEE2E2' : '#F8FAFC', borderRadius: 8, textAlign: 'center' }}><div style={{ fontSize: 18, fontWeight: 800, color: expired > 0 ? '#DC2626' : '#94A3B8' }}>{expired}</div><div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase' }}>{t('compliance.expired')}</div></div>
                       </>
                     );
                   })()}
@@ -239,7 +241,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
               {/* Attachments */}
               {previewProp.attachments.length > 0 && (
                 <div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Attachments</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>{t('propertyDetail.attachments')}</div>
                   {previewProp.attachments.map((a, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', borderRadius: 6, background: '#F8FAFC', marginBottom: 4 }}>
                       <FileText size={13} color="#64748B" />
@@ -253,7 +255,7 @@ export default function Properties({ onViewProperty, selectedCenter }) {
             {/* Footer */}
             <div style={{ padding: '14px 24px', borderTop: '1px solid #E2E8F0', display: 'flex', justifyContent: 'flex-end', gap: 8, flexShrink: 0 }}>
               <button onClick={() => { setPreviewProp(null); onViewProperty(previewProp.id); }} style={{ padding: '7px 16px', borderRadius: 6, border: '1px solid #E2E8F0', background: '#fff', fontSize: 12, fontWeight: 600, color: '#334155', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Pencil size={13} /> View Details
+                <Pencil size={13} /> {t('common.viewDetails')}
               </button>
               <button onClick={() => setPreviewProp(null)} style={{ padding: '7px 16px', borderRadius: 6, border: 'none', background: '#0F172A', fontSize: 12, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
                 Close
